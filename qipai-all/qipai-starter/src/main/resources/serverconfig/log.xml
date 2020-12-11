@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap        
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"        
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="log">
+
+	<!-- <resultMap id="RoomcardConsumeStatistics" class="com.sy.platht.service.roomCard.bean.RoomcardConsumeStatistics"> 
+		<result property="consumeDate" column="consumeDate" /> <result property="commonCards" 
+		column="commonCards" /> <result property="freeCards" column="freeCards" /> 
+		<result property="pdkConsumef" column="pdkConsumef" /> <result property="pdkConsumes" 
+		column="pdkConsumes" /> <result property="zzmjConsume" column="zzmjConsume" 
+		/> <result property="csmjConsume" column="csmjConsume" /> <result property="hzmjConsume" 
+		column="hzmjConsume" /> </resultMap> -->
+
+	<update id="insertCardsConsume" parameterClass="java.util.HashMap">
+		insert into
+		user_card_consume(userId,regBindId,consumeCard,consumeNum,regTime)
+		values(#userId#,#regBindId#,#consumeCard#,#consumeNum#,#regTime#)
+		on
+		duplicate key update
+		consumeCard=#consumeCard#,consumeNum=consumeNum+#consumeNum#
+	</update>
+
+	<update id="insertGoldConsume" parameterClass="java.util.HashMap">
+		insert into
+		user_card_consume(userId,regBindId,consumeGold,regTime,playType)
+		values(#userId#,#regBindId#,#consumeGold#,#regTime#,#playType#)
+		on
+		duplicate key update
+		consumeGold=#consumeGold#
+	</update>
+
+	<!--<update id="updateConsumeCards" parameterClass="java.util.HashMap">-->
+		<!--insert into-->
+		<!--roomcard_consume_statistics(consumeDate,commonCards,freeCards,playType64,playType63,playType62,playType61,playType81,playType20,playType21,playType22,playType23,playType24,playType113,playType114,playType91,playType92,playType93)-->
+		<!--values(#date#,#commonCards#,#freeCards#,#playType64#,#playType63#,#playType62#,#playType61#,#playType81#,#playType20#,#playType21#,#playType22#,#playType23#,#playType24#,#playType113#,#playType114#,#playType91#,#playType92#,#playType93#)-->
+		<!--on duplicate key update-->
+		<!--consumeDate=#date#,commonCards=commonCards+#commonCards#,freeCards=freeCards+#freeCards#,playType64=playType64+#playType64#,playType63=playType63+#playType63#,playType62=playType62+#playType62#,playType61=playType61+#playType61#,playType81=playType81+#playType81#,playType20=playType20+#playType20#,playType21=playType21+#playType21#,playType22=playType22+#playType22#,playType23=playType23+#playType23#,playType24=playType24+#playType24#,playType113=playType113+#playType113#,playType114=playType114+#playType114#,playType91=playType91+#playType91#,playType92=playType92+#playType92#,playType93=playType93+#playType93#-->
+	<!--</update>-->
+
+	<update id="updateConsumeCards" parameterClass="java.lang.String">
+		$sql$
+	</update>
+
+	<insert id="insetDrawLog" parameterClass="java.util.HashMap">
+		insert into
+		user_drawlotterylog (userId,time,itemId,itemName,itemNum)
+		values(#userId#,#time#,#itemId#,#itemName#,#itemNum#)
+	</insert>
+
+    <insert id="insertLogActivityReward" parameterClass="java.util.HashMap">
+		insert into log_activity_reward
+		(userId,activityType,rewardType,rewardValue,createdTime)
+		values
+		(#userId#,#activityType#,#rewardType#,#rewardValue#,#createdTime#)
+	</insert>
+
+</sqlMap>

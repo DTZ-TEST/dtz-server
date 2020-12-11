@@ -1,0 +1,26 @@
+syntax = "proto2";
+package com.sy599.game.msg.serverPacket;
+
+//任务配置信息
+message TaskInfo {
+    required int32 taskId = 1;// 任务ID
+    required int32 taskType = 2;// 任务类型
+    required string param = 3;// 任务达成条件
+    required string rewardParam = 4;// 达成任务奖励
+    required string taskDesc = 5;// 任务描述
+    required string rewardDesc = 6;// 任务奖励描述
+    required int32 state = 7;// 任务状态 0未达成 1可领取 2已领取
+    required int32 process = 8;// 任务达成进度值
+}
+
+message TypeTaskInfo {
+    required int32 taskType = 1;// 1局数任务 2财富任务
+    repeated TaskInfo taskInfos = 2;// 该类型下的任务信息
+}
+
+
+//任务面板信息
+message TaskLists {
+     repeated TypeTaskInfo taskTypeInfos = 1;//分组的任务信息
+     required int32 isOpen = 2;// 0打开返回协议 1领取返回协议
+}

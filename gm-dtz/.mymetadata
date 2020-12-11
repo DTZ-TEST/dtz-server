@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="gm-dtz"
+  id="myeclipse.1500712772174"
+  context-root="/gm-dtz"
+  j2ee-spec="6.0"
+  archive="gm-dtz.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

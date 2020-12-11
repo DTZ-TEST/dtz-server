@@ -1,0 +1,32 @@
+syntax = "proto2";
+package com.sy599.game.msg.serverPacket;
+//活动配置信息
+message GoldRoomActivityMsg {
+    optional string reqCode = 1;
+    optional int32 subsidyCount = 2;           // 破产补助：今天已领取次数
+    repeated SignatureBook signatureBook = 3;  // 本周签到表
+    optional int32 totalWinCount = 4;          // 累计胜利：今天累计胜利次数
+    optional int32 totalWinAward = 5;          // 累计胜利：今天已抽奖次数
+    optional int32 totalWinAwardCount = 6;     // 累计胜利：今天剩余抽奖励次数
+    optional int32 comboWinCount = 7;          // 连胜次数：当前连胜的次数
+    repeated int32 comboWinAward = 8;          // 连胜奖励：列表记录有连胜次数的奖励，如，[3，4]表示还有3次，4次连胜奖励未领，领取一个删除一个
+    optional int32 inviterUserAwardCount = 9;  // 拉新：领取奖励人数
+    optional int32 inviterUserAwardGold = 10;   // 拉新：领取奖励积分数
+    optional int32 inviterUserCount1 = 11;     // 拉新：游戏3局以上人数
+    optional int32 inviterUserCount2 = 12;     // 拉新：所以有邀请的人
+    repeated Award awardList = 13;             // 玩家获得奖励
+    repeated Award sysSignAward = 14;          // 签到奖励积分数，第一天到第七天
+    optional int32 sysSubsidyAward = 15;       // 破产补助单次积分数
+    optional int32 sysInviteUserAward = 16;    // 邀请玩家每人积分数
+    optional int32 sysTotalWinCount = 17;
+}
+
+message SignatureBook {
+    optional int32 day = 1; //星期1-7
+    optional int32 res = 2; //是否签到(0否，1是,2被补签)
+}
+
+message Award {
+    optional int32 type = 1;  // 奖励类型 1:积分（金币） 2：钻石（房卡）
+    optional int32 value = 2; // 奖励数值
+}

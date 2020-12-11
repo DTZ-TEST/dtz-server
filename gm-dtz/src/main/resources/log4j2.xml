@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Don't forget to set system property -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector 
+	to make all loggers asynchronous. -->
+
+<Configuration status="info" monitorInterval="15">
+	<!-- bundle :Resource bundle. The format is ${bundle:BundleName:BundleKey}. 
+		The bundle name follows package naming conventions, for example: ${bundle:com.domain.Messages:MyKey}. -->
+	<!-- ctx :Thread Context Map (MDC) -->
+	<!-- date :Inserts the current date and/or time using the specified format -->
+	<!-- env :System environment variables -->
+	<!-- jndi :A value set in the default JNDI Context. -->
+	<!-- jvmrunargs :A JVM input argument accessed through JMX, but not a main 
+		argument; see RuntimeMXBean.getInputArguments(). Not available on Android. -->
+	<!-- log4j :Log4j configuration properties. The expressions ${log4j:configLocation} 
+		and ${log4j:configParentLocation} respectively provide the absolute path 
+		to the log4j configuration file and its parent folder. -->
+	<!-- main :A value set with MapLookup.setMainArguments(String[]) -->
+	<!-- map :A value from a MapMessage -->
+	<!-- sd :A value from a StructuredDataMessage. The key "id" will return 
+		the name of the StructuredDataId without the enterprise number. The key "type" 
+		will return the message type. Other keys will retrieve individual elements 
+		from the Map. -->
+	<!-- sys :System properties -->
+	<properties>
+		<!-- ${LOG_HOME} -->
+		<property name="LOG_HOME">E:/home/sy/logs</property>
+		<property name="SERVER_ID"></property><!-- ${sys:server_id} -->
+		<property name="IMMEDIATE_FLUSH">true</property><!-- force flush -->
+		<property name="INCLUDE_LOCATION">true</property>
+	</properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d][%t][%p][%c:%L] %m%n" />
+		</Console>
+		<RollingRandomAccessFile name="Base_File"
+			fileName="${LOG_HOME}/gm.log" filePattern="${LOG_HOME}/gm.log.%d{yyyy-MM-dd}.%i"
+			append="true" immediateFlush="${IMMEDIATE_FLUSH}" ignoreExceptions="false"><!-- .gz -->
+			<PatternLayout charset="UTF-8">
+				<pattern>%5p | %c{1}-%M [%d{yyyy-MM-dd HH:mm:ss}] - %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<!--<OnStartupTriggeringPolicy /> -->
+				<SizeBasedTriggeringPolicy size="50MB" />
+				<!--<TimeBasedTriggeringPolicy /> -->
+			</Policies>
+			<DefaultRolloverStrategy max="500" />
+			<Filters>
+				<ThresholdFilter level="error" onMatch="DENY" onMismatch="ACCEPT"/>
+			</Filters>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile name="Error_File"
+								 fileName="${LOG_HOME}/error/gm_error.log" filePattern="${LOG_HOME}/error/gm_error.log.%d{yyyy-MM-dd}.%i"
+								 append="true" immediateFlush="${IMMEDIATE_FLUSH}" ignoreExceptions="false"><!-- .gz -->
+			<PatternLayout charset="UTF-8">
+				<pattern>%5p | %c{1}-(%F:%L)-%M [%d{yyyy-MM-dd HH:mm:ss}] - %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<!--<OnStartupTriggeringPolicy /> -->
+				<SizeBasedTriggeringPolicy size="50MB" />
+				<!--<TimeBasedTriggeringPolicy /> -->
+			</Policies>
+			<DefaultRolloverStrategy max="500" />
+			<Filters>
+				<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile name="Sql_File"
+			fileName="${LOG_HOME}/sql/gm_sql_log.log" filePattern="${LOG_HOME}/sql/gm_sql_log.log.%d{yyyy-MM-dd}.%i"
+			append="true" immediateFlush="${IMMEDIATE_FLUSH}" ignoreExceptions="false"><!-- .gz -->
+			<PatternLayout charset="UTF-8">
+				<pattern>%5p | %c{1}-%M [%d{yyyy-MM-dd HH:mm:ss}] - %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<!--<OnStartupTriggeringPolicy /> -->
+				<SizeBasedTriggeringPolicy size="50MB" />
+				<!--<TimeBasedTriggeringPolicy /> -->
+			</Policies>
+			<DefaultRolloverStrategy max="500" />
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile name="Db_File"
+			fileName="${LOG_HOME}/dblog/gm_db_log.log" filePattern="${LOG_HOME}/dblog/gm_db_log.log.%d{yyyy-MM-dd}.%i"
+			append="true" immediateFlush="${IMMEDIATE_FLUSH}" ignoreExceptions="false"><!-- .gz -->
+			<PatternLayout charset="UTF-8">
+				<pattern>%5p | %c{1}-%M [%d{yyyy-MM-dd HH:mm:ss}] - %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<!--<OnStartupTriggeringPolicy /> -->
+				<SizeBasedTriggeringPolicy size="50MB" />
+				<!--<TimeBasedTriggeringPolicy /> -->
+			</Policies>
+			<DefaultRolloverStrategy max="500" />
+		</RollingRandomAccessFile>
+
+		<RollingRandomAccessFile name="Monitor_File"
+			fileName="${LOG_HOME}/monitor/monitor_log${SERVER_ID}.log"
+			filePattern="${LOG_HOME}/monitor/monitor_log${SERVER_ID}.log.%d{yyyy-MM-dd}"
+			append="true" immediateFlush="${IMMEDIATE_FLUSH}" ignoreExceptions="false"><!-- .gz -->
+			<PatternLayout charset="UTF-8">
+				<pattern>%5p | %c{1}-%M [%d{yyyy-MM-dd HH:mm:ss}] - %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<!--<OnStartupTriggeringPolicy /> -->
+				<!-- <SizeBasedTriggeringPolicy size="50MB" /> -->
+				<TimeBasedTriggeringPolicy modulate="true"
+					interval="1" />
+			</Policies>
+			<DefaultRolloverStrategy max="500" />
+		</RollingRandomAccessFile>
+	</Appenders>
+
+	<Loggers>
+		<!-- <Logger></Logger><AsyncLogger></AsyncLogger><AsyncRoot></AsyncRoot><Root></Root> -->
+		<Logger name="MONITOR" level="info" includeLocation="${INCLUDE_LOCATION}"
+			additivity="false">
+			<AppenderRef ref="Monitor_File" />
+		</Logger>
+		<Logger name="DBLOG" level="info" includeLocation="${INCLUDE_LOCATION}"
+			additivity="false">
+			<AppenderRef ref="Db_File" />
+		</Logger>
+		<Logger name="SQL" level="info" includeLocation="${INCLUDE_LOCATION}"
+			additivity="false">
+			<AppenderRef ref="Sql_File" />
+		</Logger>
+		<Root level="info" includeLocation="${INCLUDE_LOCATION}">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="Base_File" />
+			<AppenderRef ref="Error_File" />
+		</Root>
+	</Loggers>
+</Configuration>

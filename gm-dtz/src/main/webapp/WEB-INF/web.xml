@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<!-- 可以不设置 -->
+	<!-- <context-param> -->
+	<!-- <param-name>log4jLocation</param-name> -->
+	<!-- <param-value>log4j.xml</param-value> -->
+	<!-- </context-param> -->
+	<!-- 是否使用disruptor开启异步日志log4j2Sync:false -->
+	<!-- <context-param> -->
+	<!-- <param-name>logSwitch</param-name> -->
+	<!-- <param-value>log4j2Sync</param-value> -->
+	<!-- </context-param> -->
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.gif</url-pattern>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.jpeg</url-pattern>
+		<url-pattern>*.ico</url-pattern>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+
+	<listener>
+		<listener-class>com.sy.mainland.util.Log4jConfigListener</listener-class>
+	</listener>
+	<listener>
+		<!--<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>-->
+		<listener-class>com.sy.core.AutoContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	<!--<context-param>-->
+		<!--<param-name>contextConfigLocation</param-name>-->
+		<!--<param-value>classpath*:applicationContext.xml</param-value>-->
+	<!--</context-param>-->
+	<!-- spring dispatcher start -->
+	<servlet>
+		<servlet-name>Spring-MVC-Dispatcher-Servlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				classpath*:applicationContext-*.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Spring-MVC-Dispatcher-Servlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<!-- spring dispatcher end -->
+
+	<!-- characterEncodingFilter start -->
+	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- characterEncodingFilter end -->
+
+	<!-- session有效时间(分钟) -->
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+	<!-- error page start -->
+	<error-page>
+		<error-code>400</error-code>
+		<location>/WEB-INF/views/error/400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/WEB-INF/views/error/401.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/WEB-INF/views/error/403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/views/error/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/views/error/500.jsp</location>
+	</error-page>
+	<!-- error page end -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

@@ -1,0 +1,48 @@
+<%@page pageEncoding="UTF-8"%>
+
+<div id="switchGameDiv" style="text-align: center;width: 100%;" align="center">
+  <!--   <table class="table3" style="text-align: center;width: 100%;padding: 0px;" cellspacing="0" cellpadding="10">
+        <tr align="center">
+            <td id="tabGame_1" style="background-color: rgb(122,196,240);" onclick="checkTab(this.id)">快乐打筒子</td>
+            <td id="tabGame_2" style="background-color: transparent" onclick="checkTab(this.id)">跑得快</td>
+            <td id="tabGame_3" style="background-color: transparent" onclick="checkTab(this.id)">快乐跑胡子</td>
+        </tr>
+    </table> -->
+    <input type="hidden" id="gameId" name="gameId" value="1">
+</div>
+
+<script type="text/javascript">
+    function checkTab(currentId) {
+        if (currentId.indexOf("tabGame_")==-1){
+            currentId="tabGame_"+currentId;
+        }
+
+        // if(currentId.substring(8)!="1"){
+        //     alert("即将上线，敬请期待");
+        //     return;
+        // }
+
+        $("td[id^='tabGame_']").each(function () {
+            var tempVal=$("#"+this.id).html();
+            if (this.id==currentId){
+                $("#"+this.id).css("background-color","rgb(122,196,240)");
+                $("#"+this.id).html(tempVal);
+                $("#gameId").val(this.id.substring(8));
+            }else{
+                $("#"+this.id).css("background-color","transparent");
+                $("#"+this.id).html(tempVal);
+            }
+        })
+
+        try{
+            if(typeof(eval("switchGame"))=="function"){
+                switchGame();
+            }
+        }catch(e){
+        }
+
+    }
+    function loadCheckedGameId() {
+        return $("#gameId").val();
+    }
+</script>

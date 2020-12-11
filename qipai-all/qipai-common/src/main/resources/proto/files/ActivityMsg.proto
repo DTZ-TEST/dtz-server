@@ -1,0 +1,21 @@
+syntax = "proto2";
+package com.sy599.game.msg.serverPacket;
+
+//活动配置信息
+message ActivityConfigInfo {
+    required int32 id = 1;// 活动ID
+    required string wanfas = 2;// 支持的玩法ID -1表示所有玩家
+    required int32 type = 3;// 活动类型 0永久活动 1时限活动
+    required string activityName = 4;// 活动名称
+    required string startTime = 5;// 活动开始时间
+    required string endTime = 6;// 活动结束时间
+    required string params = 7;// 活动相关参数  包括活动达成相关参数comParams 活动奖励配置参数rewardParams  玩家个人活动相关参数 
+	required string desc = 8;// 活动描叙
+	optional int32 singleEnter = 9;// 是否单独入口活动 1单独入口活动 0活动专区活动
+}
+
+
+//精彩活动面板信息
+message ActivityLists {
+     repeated ActivityConfigInfo configInfos = 1;// 开启的活动信息列表
+}

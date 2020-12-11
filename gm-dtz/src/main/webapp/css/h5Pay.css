@@ -1,0 +1,173 @@
+html,body {-ms-touch-action: none;background:#efeef3;height: 100%;text-align:center;font-family:"微软雅黑","宋体","Arial";letter-spacing:3px;}
+html,body,img,h4,div,ul,li,p,h3,hr{margin:0px;padding:0px;border: 0px;}
+ul{
+	list-style-type: none;
+	display:block;
+	width:100%;
+}
+hr{
+	height:1px;
+	background-color:#b5b5b5;
+	
+}
+#top{
+	background-color:#db4453;
+	height:100px;
+	width:100%;
+}
+h3{
+	color:#ffffff;
+	font-size:2.8em;
+	font-weight:normal;
+	letter-spacing:10px;
+	padding-top:23px;
+}
+#xuanze_tip{
+	color:#b5b5b5;
+	font-size:1.6em;
+	letter-spacing:8px;
+	padding-top:20px;
+	padding-left:5%;
+}
+#content{
+	background-color:#ffffff;
+	height:490px;
+	text-align:left;
+
+}
+#productList{
+	height:330px;
+	text-align:center;
+	margin-top:-10px;
+}
+li{
+	border:1px solid #000;
+	margin-top:23px;
+	margin-left:4.5%;
+	height:72px;
+	width:42.5%;
+	float:left;
+	background-color:#fff;
+	font-size:1.5em;
+	padding-top:7px;
+	letter-spacing:2px;
+	border-radius:5px;
+	overflow:hidden;
+}
+.li_selected{
+	background-color:#06ba03; 
+	color:#FFFFFF;
+}
+#game_name{
+	font-size:1.7em;
+	padding-left:5%;
+	margin-top:-12px;
+}
+.input_text{
+	font-size:1.7em;
+	padding-left:5%;
+	margin-top:15px;
+}
+.input_text p{
+	display:inline;
+}
+.id_input{
+	font-size:1.4em;
+	width:40%;
+	height:45px;
+	border-radius:5px;
+	overflow:hidden;
+	border:1px solid #000;
+	vertical-align:text-bottom ;
+}
+#pay{
+	text-align:left;
+	font-size:1.7em;
+	
+}
+#pay_tip_num{
+	padding-left:5%;
+	margin-top:10px;
+}
+#pay_num{
+	color:#f97402;
+	font-size:2.7em;
+	margin:30px;
+	display:inline;
+	margin-top:30px;
+	
+}
+.btn{
+	border-radius:5px;
+	overflow:hidden;
+	background-color:#fff;
+	height:70px;
+	width:88%;
+	margin:30px 6%;
+	text-align:center;
+	line-height:70px;
+	font-size:1.1em;
+	border:1px solid #000;
+}
+#pay_btn{
+	background-color:#06ba03;
+	color:#fff;
+}
+#back_btn{
+	margin-top:28px;
+}
+.black_overlay{ 
+	position: absolute; display:none;
+	top: 0%; 
+	left: 0%; 
+	width: 100%; 
+	height: 100%; 
+	background-color: black; 
+	z-index:1001; 
+	-moz-opacity: 0.8; 
+	opacity:.80; 
+	filter: alpha(opacity=88); 
+} 
+.white_content { 
+	position: absolute; display:none;
+	top: 15%; 
+	left: 5%; 
+	width: 90%; 
+	height: 65%; 
+	background-color: white; 
+	z-index:1002; 
+	overflow: auto; 
+} 
+.white_content_bind{
+	position: absolute; display:none;
+	top: 25%; 
+	left: 5%; 
+	width: 90%; 
+	height: 50%; 
+	background-color: white; 
+	z-index:1002; 
+	overflow: auto; 
+}
+.user_info{ 
+	font-size:1.8em;
+	text-align:left;
+	float:left; margin-top:20px;
+}
+.radiowho{
+    width:30px;
+	height:30px;
+	margin-top:3px;
+}
+#footer{
+	font-size:1.4em;
+	line-height:30px;
+	letter-spacing:2px;
+	height:170px;
+}
+.footer_c0{
+	color: #000000;
+}
+#weixin-tip{display:none;position:fixed;left:0;top:0;background:rgba(0,0,0,0.8);filter:alpha(opacity=80);width:100%;height:100%;z-index:100;}
+#weixin-tip p{text-align:center;margin-top:10%;padding:0 5%;position:relative;}
+#weixin-tip p img{max-width: 100%; height: auto;}
+#weixin-tip .close{color:#fff;padding:5px;font:bold 20px/24px simsun;text-shadow:0 1px 0 #ddd;position:absolute;top:0;left:5%;}

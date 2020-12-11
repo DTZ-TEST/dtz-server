@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:task="http://www.springframework.org/schema/task"
+	   xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+	   http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	   http://www.springframework.org/schema/task
+	   http://www.springframework.org/schema/task/spring-task.xsd"
+	   default-autowire="byName">
+
+	<task:annotation-driven />
+	<!-- executor="myExecutor" scheduler="myScheduler" -->
+	<!-- <task:executor id="myExecutor" pool-size="5"/> -->
+	<!-- <task:scheduler id="myScheduler" pool-size="10"/> -->
+
+	<mvc:annotation-driven />
+	<context:annotation-config />
+	<!-- 需要扫描的包 -->
+	<context:component-scan base-package="com.sy" />
+	<!-- AOP配置 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<!-- 静态资源访问配置 -->
+	<mvc:default-servlet-handler />
+
+	<!-- org.springframework.beans.factory.config.PropertyPlaceholderConfigurer -->
+	<bean id="propertyConfigurer"
+		class="com.sy.mainland.util.PropertyConfigurer">
+<!-- 		<property name="locations"> -->
+<!-- 			<list> -->
+<!-- 				<value>classpath*:jdbc.properties</value> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+		<property name="prop">
+			<value>classpath:jdbc.properties</value>
+		</property>
+	</bean>
+
+	<bean class="com.sy.mainland.util.PropertiesFileLoader"
+		init-method="init" destroy-method="destroy" scope="singleton">
+		<!-- 自动检测间隔时间(s) -->
+		<property name="intervalTime">
+			<value>10</value>
+		</property>
+		<!-- 自动重新加载的文件类型，为空全部重新加载 -->
+		<property name="fileTypeList">
+			<list>
+				<value>properties</value>
+			</list>
+		</property>
+		<!-- 包含的文件 -->
+		<property name="includeList">
+			<list>
+				<value></value>
+			</list>
+		</property>
+		<!-- 不包含的文件（优先级最高） -->
+		<property name="exclusiveList">
+			<list>
+				<value></value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="writeDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="jdbcUrl">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<value>${jdbc.url}</value>
+				</property>
+			</bean>
+		</property>
+		<property name="properties">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<props>
+						<prop key="user">${jdbc.user}</prop>
+						<prop key="password">${jdbc.password}</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+		<property name="driverClass">
+			<value>${jdbc.driverClass}</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>${jdbc.acquireIncrement}</value>
+		</property>
+		<property name="initialPoolSize">
+			<value>${jdbc.initialPoolSize}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${jdbc.miniPoolSize}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${jdbc.maxPoolSize_read}</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>${jdbc.maxIdleTime}</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>${jdbc.idleConnectionTestPeriod}</value>
+		</property>
+	</bean>
+
+
+	<bean id="readDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="jdbcUrl">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<value>${jdbc.url_read}</value>
+				</property>
+			</bean>
+		</property>
+		<property name="properties">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<props>
+						<prop key="user">${jdbc.user_read}</prop>
+						<prop key="password">${jdbc.password_read}</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+		<property name="driverClass">
+			<value>${jdbc.driverClass}</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>${jdbc.acquireIncrement}</value>
+		</property>
+		<property name="initialPoolSize">
+			<value>${jdbc.initialPoolSize}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${jdbc.miniPoolSize}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${jdbc.maxPoolSize_read}</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>${jdbc.maxIdleTime}</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>${jdbc.idleConnectionTestPeriod}</value>
+		</property>
+	</bean>
+
+
+<bean id="writeDataSource3" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="jdbcUrl">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<value>${phz_jdbc.url}</value>
+				</property>
+			</bean>
+		</property>
+		<property name="properties">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<props>
+						<prop key="user">${phz_jdbc.user}</prop>
+						<prop key="password">${phz_jdbc.password}</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+		<property name="driverClass">
+			<value>${jdbc.driverClass}</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>${jdbc.acquireIncrement}</value>
+		</property>
+		<property name="initialPoolSize">
+			<value>${jdbc.initialPoolSize}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${jdbc.miniPoolSize}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${jdbc.maxPoolSize_read}</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>${jdbc.maxIdleTime}</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>${jdbc.idleConnectionTestPeriod}</value>
+		</property>
+	</bean>
+
+
+	<bean id="readDataSource3" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="jdbcUrl">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<value>${phz_jdbc.url_read}</value>
+				</property>
+			</bean>
+		</property>
+		<property name="properties">
+			<bean class="com.sy.mainland.util.PropertiesEncryptFactoryBean">
+				<property name="property">
+					<props>
+						<prop key="user">${phz_jdbc.user_read}</prop>
+						<prop key="password">${phz_jdbc.password_read}</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+		<property name="driverClass">
+			<value>${jdbc.driverClass}</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>${jdbc.acquireIncrement}</value>
+		</property>
+		<property name="initialPoolSize">
+			<value>${jdbc.initialPoolSize}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${jdbc.miniPoolSize}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${jdbc.maxPoolSize_read}</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>${jdbc.maxIdleTime}</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>${jdbc.idleConnectionTestPeriod}</value>
+		</property>
+	</bean>
+    <bean id="readWriteSwitch" class="com.sy.mainland.util.db.SingleReadWriteSwitch">
+		<property name="write" ref="writeDataSource" />
+		<property name="read" ref="readDataSource" />
+	</bean>
+	
+	 <bean id="readWriteSwitch3" class="com.sy.mainland.util.db.SingleReadWriteSwitch">
+		<property name="write" ref="writeDataSource3" />
+		<property name="read" ref="readDataSource3" />
+	</bean>
+	<!-- 多个数据源 -->
+
+	<bean id="multiReadWriteSwitch" class="com.sy.mainland.util.db.MultiReadWriteSwitch">
+		<property name="multiReadWriteSwitchMap">
+			<map>
+				<entry value-ref="readWriteSwitch" key="DB_1"></entry>
+				<!--<entry value-ref="readWriteSwitch" key="DB_0"></entry>-->
+				<entry value-ref="readWriteSwitch3" key="DB_3"></entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="defaultReadWriteSwitch" class="com.sy.mainland.util.db.SingleReadWriteSwitch">
+		<!-- 主从配置，支持一主多从 -->
+		<property name="write" ref="writeDataSource" />
+		<!-- 单个从 -->
+		<property name="read" ref="readDataSource" />
+		<!-- 多个从 -->
+		<!-- 支持map,list,array,set -->
+		<!--
+		<property name="read">
+			<map>
+				<entry value-ref="readDataSource" key="slave"></entry>
+			</map>
+		</property>
+		-->
+	</bean>
+
+	<bean id="dynamicDataSource" class="com.sy.mainland.util.db.DBDataSource">
+		<!-- 默认数据源 -->
+		<property name="defaultReadWriteSwitch" ref="defaultReadWriteSwitch" />
+		<!-- 指定数据源 -->
+		<property name="readWriteSwitch" ref="multiReadWriteSwitch" />
+		<!-- 默认为DB_0 -->
+		 <property name="db" value="DB_1"/>
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dynamicDataSource" />
+	</bean>
+
+	<bean id="readWriteDataSourceTransactionProcessor" class="com.sy.mainland.util.db.DBProcessor">
+		<property name="forceChoiceReadWhenWrite" value="true" />
+		<!--<property name="scope" value="request"></property>-->
+	</bean>
+
+	<aop:config expose-proxy="true">
+		<!-- 只对业务逻辑层实施事务 -->
+		<aop:pointcut id="txPointcut" expression="execution(* com.sy.service..*.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />
+		<aop:aspect order="-2147483648" ref="readWriteDataSourceTransactionProcessor">
+			<aop:around pointcut-ref="txPointcut" method="determineReadOrWriteDB" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dynamicDataSource" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="merge*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="batch*" propagation="REQUIRED" />
+
+			<tx:method name="load*" read-only="true" />
+			<tx:method name="select*" read-only="true" />
+			<tx:method name="query*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="count*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="check*" read-only="true" />
+			<tx:method name="is*" read-only="true" />
+
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<import resource="applicationContext-sy.xml" />
+</beans>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+	   http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+	default-autowire="byName">
+
+	<!-- 该 BeanPostProcessor 将自动起作用，对标注 @Autowired 的 Bean 进行自动注入。 在Spring MVC 
+		中 由于配置了 “ <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>” 
+		故不使用引入上面自动注入也可实现指定注入功能。 -->
+	<bean
+		class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<mvc:resources location="/js/" mapping="/**/*.js"/>
+	<mvc:resources location="/css/" mapping="/**/*.css"/>
+	<!--<mvc:resources location="/assets/" mapping="/assets/**/*"/>-->
+	<mvc:resources location="/image/" mapping="/image/**" cache-period="360000"/>
+	<mvc:resources location="/**/html/" mapping="/**/html/*.html"/>
+
+	<!-- 拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<!--<mvc:exclude-mapping path="/**/fonts/*"/>-->
+			<mvc:exclude-mapping path="/*.css"/>
+			<mvc:exclude-mapping path="/*.js"/>
+			<mvc:exclude-mapping path="/*.png"/>
+			<mvc:exclude-mapping path="/*.gif"/>
+			<mvc:exclude-mapping path="/*.jpg"/>
+			<mvc:exclude-mapping path="/*.jpeg"/>
+			<!--<mvc:exclude-mapping path="/image/*"/>-->
+			<mvc:exclude-mapping path="/html/*.html"/>
+
+			<bean id="authenticationInterceptor" class="com.sy.core.AuthenticationInterceptor">
+				<property name="allowUrls">
+					<list>
+						<!-- 如果请求中包含以下路径，则不进行拦截 -->
+						<!--<value></value>-->
+					</list>
+				</property>
+				<property name="allowContains">
+					<list>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- 视图解析 -->
+	<!-- 设置JSP的配置文件路径 -->
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+		<property name="prefix" value="/WEB-INF/views/jsp/" />
+		<property name="suffix" value=".jsp" />
+		<!-- <property name="order" value="1"/> -->
+	</bean>
+
+	<!--<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />-->
+	<!--<bean id="viewResolver"-->
+		  <!--class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+		<!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+		<!--&lt;!&ndash;结果视图的前缀&ndash;&gt;-->
+		<!--<property name="prefix" value="/WEB-INF/views/jsp/"/>-->
+		<!--&lt;!&ndash;结果视图的后缀&ndash;&gt;-->
+		<!--<property name="suffix" value=".jsp"/>-->
+	<!--</bean>-->
+</beans>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap        
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"        
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="activity">
+
+	<!-- 
+	<update id="updateFudai" parameterClass="java.util.HashMap">
+		update user_lucky set feedbackCount = feedbackCount + #card# where userId = #userId#
+	</update>
+	 -->
+
+	<insert id="addHbFafangRecord" parameterClass="java.util.HashMap">
+		insert into hb_fafang_record (id, tableId, userId, userName, hbType, money, createTime) values 
+		(#id#, #tableId#, #userId#, #userName#, #hbType#, #money#, #createTime#)
+	</insert>
+	
+	<update id="insertUserTotalMoney" parameterClass="java.util.HashMap">
+		insert into
+		user_extendinf(userId, cdk, extend, myConsume, name, totalMoney, shengMoney, prizeFlag)
+		values(#userId#, #cdk#, #extend#, #myConsume#, #name#, #totalMoney#, #shengMoney#, #prizeFlag#)
+		on
+		duplicate key update
+		totalMoney = totalMoney + #totalMoney#
+	</update>
+	
+	<update id="updateFudai" parameterClass="java.util.HashMap">
+		insert into
+		user_lucky (userId, username, sex, inviteeCount, invitorId, feedbackCount, openCount, activityStartTime, prizeFlag) values 
+		(#userId#, #username#, #sex#, #inviteeCount#, #invitorId#, #feedbackCount#, #openCount#, #activityStartTime#, #prizeFlag#)
+		on duplicate key update
+		feedbackCount = feedbackCount + #feedbackCount#
+	</update>
+	
+	<insert id="addActivityReward" parameterClass="com.sy599.game.db.bean.activityRecord.ActivityReward">
+		insert into activity_reward (activityId, userId, type, state, rewardIndex, rewardDate, reward, rewardNum) values 
+		(#activityId#, #userId#, #type#, #state#, #rewardIndex#, #rewardDate#, #reward#, #rewardNum#)
+	</insert>
+	
+</sqlMap>

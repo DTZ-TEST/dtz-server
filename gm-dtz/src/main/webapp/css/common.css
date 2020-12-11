@@ -1,0 +1,47 @@
+div {
+    width: 100%;
+}
+
+.table1 table {
+    border-right: 1px solid #b5b5b5;
+    border-bottom: 1px solid #b5b5b5;
+}
+
+.table1 table td {
+    border-left: 1px solid #b5b5b5;
+    border-top: 1px solid #b5b5b5;
+}
+
+.table2 table {
+    border-bottom: 1px solid #b5b5b5;
+}
+
+.table2 table td {
+    border-top: 1px solid #b5b5b5;
+}
+
+.table3{
+    border-right: 1px solid #b5b5b5;
+    border-bottom: 1px solid #b5b5b5;
+}
+
+.table3 td {
+    border-left: 1px solid #b5b5b5;
+    border-top: 1px solid #b5b5b5;
+}
+
+.header_table{
+    text-align:center;background-image: url('../image/header.png');background-repeat:repeat-x;background-size:100%;width: 100%;
+}
+.header_img1{
+    width: 30px;height: 30px;margin-top: 16px;margin-bottom: 13px;
+}
+.header_img2{
+    height: 25px;margin-top: 16px;margin-bottom: 13px;
+}
+.header_img3{
+    width: 30px;height: 30px;margin-top: 16px;margin-bottom: 13px;
+}
+.fix_td{
+    width: 70px;
+}

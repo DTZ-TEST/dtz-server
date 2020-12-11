@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap        
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"        
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="gold">
+	<resultMap class="com.sy.sanguo.game.bean.GoldUserInfo" id="goldUser">
+		<result property="userId" column="userId" />
+		<result property="userName" column="userName" />
+		<result property="userNickName" column="userNickName" />
+		<result property="headimgurl" column="headimgurl" />
+		<result property="headimgraw" column="headimgraw" />
+		<result property="playCount" column="playCount" />
+		<result property="playCountWin" column="playCountWin" />
+		<result property="playCountLose" column="playCountLose" />
+		<result property="playCountEven" column="playCountEven" />
+		<result property="freeGold" column="freeGold" />
+		<result property="gold" column="gold" />
+		<result property="usedGold" column="usedGold" />
+		<result property="exp" column="exp" />
+		<result property="vipexp" column="vipexp" />
+        <result property="extend" column="extend" />
+        <result property="signature" column="signature"/>
+	</resultMap>
+    <select id="selectGoldUserByUserId" parameterClass="java.lang.Long" resultMap="goldUser">
+        SELECT * FROM t_gold_user WHERE userId = #userId#
+    </select>
+
+    <update id="updateGoldUser" parameterClass="java.util.HashMap">
+        UPDATE t_gold_user SET 1=1
+        <isPropertyAvailable property="sex" prepend=",">
+            sex = #sex#
+        </isPropertyAvailable>
+        <isPropertyAvailable property="userNickName" prepend=",">
+            userNickName = #userNickName#
+        </isPropertyAvailable>
+        <isPropertyAvailable property="headimgurl" prepend=",">
+            headimgurl = #headimgurl#
+        </isPropertyAvailable>
+        <isPropertyAvailable property="signature" prepend=",">
+            signature = #signature#
+        </isPropertyAvailable>
+        WHEN userId = #userId#
+    </update>
+
+    <update id="addUserGold" parameterClass="java.util.HashMap">
+        UPDATE t_gold_user
+        <dynamic prepend="set">
+            <isPropertyAvailable prepend="," property="gold" >
+                gold = gold + #gold#
+            </isPropertyAvailable>
+            <isPropertyAvailable prepend="," property="freeGold">
+                freeGold = freeGold + #freeGold#
+            </isPropertyAvailable>
+        </dynamic>
+        WHERE userId = #userId#
+    </update>
+
+    <select id="selectMatchBean" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+        select * from t_match where keyId=#matchId#
+    </select>
+</sqlMap>
+
+
+
+
+
+
+

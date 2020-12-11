@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.sy.game.qipai</groupId>
+    <artifactId>qipai-all</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>qipai-lib</module>
+        <module>qipai-common</module>
+        <module>qipai-starter</module>
+        <module>game-zp-sypaohuzi</module>
+        <module>game-zp-ldfpf</module>
+        <module>game-zp-klpaohuzi</module>
+        <module>game-mj-symj</module>
+        <module>game-mj-hzmj</module>
+        <module>game-mj-zzmj</module>
+        <module>game-mj-csmj</module>
+        <module>game-pk-pdkuai</module>
+        <module>game-pk-dtz</module>
+        <module>game-pk-bbtz</module>
+        <module>game-pk-doudizhu</module>
+        <module>guajiLogin</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.compiler>1.8</project.build.compiler>
+    </properties>
+
+
+    <dependencies>
+        <!--<dependency>-->
+        <!--<groupId>net.bytebuddy</groupId>-->
+        <!--<artifactId>bytebuddy</artifactId>-->
+        <!--<version>1.4.26</version>-->
+        <!--<scope>system</scope>-->
+        <!--<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/byte-buddy-1.4.26.jar</systemPath>-->
+
+        <!--</dependency>-->
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <forkMode>once</forkMode>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${project.build.compiler}</source>
+                    <target>${project.build.compiler}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
