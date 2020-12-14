@@ -4,11 +4,11 @@ echo ""
 echo "---------------------start---------------------"
 #配置
 #项目前辍
-PROJECT_PREFIX=jnqp
+PROJECT_PREFIX=dtz
 #git项目地址
-PROJECT_DIR=/d/work/workspace/dtz/dtz-server/bjd-dtz/bjd-dtz/qipai-all/guajiLogin
+PROJECT_DIR=/d/dtz-server/qipai-all/guajiLogin
 #包输出目录
-OUT_DIR=/c/Users/Administrator/Desktop/package/dtz
+OUT_DIR=/d/dtz-package
 
 #当前目录
 CUR_DIR=`pwd`
@@ -162,8 +162,12 @@ DATE_STR=`date -d today +%m%d%H%M%S`
 
 cd ${PACKAGE_DIR}
 
-PACKAGE_FILE_NAME="${PROJECT_PREFIX}_login_${DATE_STR}.tar.gz"
-tar -zcf ${PACKAGE_FILE_NAME} WEB-INF
+#PACKAGE_FILE_NAME="${PROJECT_PREFIX}_login_${DATE_STR}.tar.gz"
+#tar -zcf ${PACKAGE_FILE_NAME} WEB-INF
+
+PACKAGE_FILE_NAME="${PROJECT_PREFIX}_login_${DATE_STR}.zip"
+#tar -zcf ${PACKAGE_FILE_NAME} WEB-INF
+zip -r ${PACKAGE_FILE_NAME} WEB-INF
 
 if [ $? -eq 0 ]; then
     echo packageName=${PACKAGE_FILE_NAME}
