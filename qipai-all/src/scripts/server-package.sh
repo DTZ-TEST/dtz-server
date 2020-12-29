@@ -6,14 +6,14 @@ echo "---------------------start---------------------"
 #项目前辍
 PROJECT_PREFIX=dtz
 #svn项目地址
-PROJECT_DIR=/d/dtz-server/qipai-all
+PROJECT_DIR=/d/dtz-server/
 #包输出目录
 OUT_DIR=/d/dtz-package
 
 #当前目录
-CUR_DIR=`pwd`
+#CUR_DIR=`pwd`
 #配置文件，配置需要保留的文件
-PROP_FILE="${CUR_DIR}/server.properties"
+PROP_FILE="/d/dtz-server/qipai-all/src/scripts/server.properties"
 
 #打包的目标目录
 PACKAGE_DIR="${OUT_DIR}/server"
@@ -69,6 +69,7 @@ done
 echo ""
 echo ""
 echo "---------------------mvn build---------------------"
+cd /d/dtz-server/qipai-all
 
 mvn clean install -U -Dmaven.test.skip=true
 
@@ -85,7 +86,7 @@ echo ""
 echo "---------------------copy project---------------------"
 
 rm -rf "${PACKAGE_DIR}/WEB-INF"
-TARGET_DIR="${PROJECT_DIR}/qipai-starter/target/qipai-starter-1.0-SNAPSHOT/WEB-INF"
+TARGET_DIR="${PROJECT_DIR}/qipai-all/qipai-starter/target/qipai-starter-1.0-SNAPSHOT/WEB-INF"
 # echo TARGET_DIR=${TARGET_DIR}
 cp -r ${TARGET_DIR} ${PACKAGE_DIR}
 
