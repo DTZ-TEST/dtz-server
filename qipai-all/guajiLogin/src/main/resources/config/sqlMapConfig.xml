@@ -46,5 +46,6 @@
 	<sqlMap resource="config/ibatis/mangguo_authorization.xml" />
 	<sqlMap resource="config/ibatis/redbagInfo.xml" />
 	<sqlMap resource="config/ibatis/userCardRecord.xml" />
+	<sqlMap resource="config/ibatis/t_group_warn.xml" />
     <sqlMap resource="config/ibatis/t_group_credit.xml" />
 </sqlMapConfig>

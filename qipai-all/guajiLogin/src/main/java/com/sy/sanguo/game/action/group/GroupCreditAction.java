@@ -8,17 +8,14 @@ import com.sy.sanguo.common.util.OutputUtil;
 import com.sy.sanguo.common.util.UrlParamUtil;
 import com.sy.sanguo.common.util.user.GameUtil;
 import com.sy.sanguo.game.bean.RegInfo;
-import com.sy.sanguo.game.bean.group.GroupCreditConfig;
-import com.sy.sanguo.game.bean.group.GroupInfo;
-import com.sy.sanguo.game.bean.group.GroupReview;
-import com.sy.sanguo.game.bean.group.GroupTableConfig;
-import com.sy.sanguo.game.bean.group.GroupUser;
+import com.sy.sanguo.game.bean.group.*;
 import com.sy.sanguo.game.constants.GroupConstants;
 import com.sy.sanguo.game.constants.TableConfigConstants;
 import com.sy.sanguo.game.dao.DataStatisticsDao;
 import com.sy.sanguo.game.dao.UserDaoImpl;
 import com.sy.sanguo.game.dao.group.GroupCreditDao;
 import com.sy.sanguo.game.dao.group.GroupDao;
+import com.sy.sanguo.game.dao.group.GroupWarnDao;
 import com.sy599.sanguo.util.ResourcesConfigsUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +42,8 @@ public class GroupCreditAction extends GameStrutsAction {
     private GroupDao groupDao;
     private GroupCreditDao groupCreditDao;
     private DataStatisticsDao dataStatisticsDao;
+    private GroupWarnDao groupWarnDao;
+
 
     public void setUserDao(UserDaoImpl userDao) {
         this.userDao = userDao;
@@ -57,7 +56,9 @@ public class GroupCreditAction extends GameStrutsAction {
     public void setDataStatisticsDao(DataStatisticsDao dataStatisticsDao) {
         this.dataStatisticsDao = dataStatisticsDao;
     }
-
+    public void setGroupWarnDao(GroupWarnDao groupWarnDao) {
+        this.groupWarnDao = groupWarnDao;
+    }
     public void setGroupCreditDao(GroupCreditDao groupCreditDao) {
         this.groupCreditDao = groupCreditDao;
     }
@@ -2329,6 +2330,16 @@ public class GroupCreditAction extends GameStrutsAction {
         }
     }
 
+    public RegInfo checkSessCodeNew(long userId, String sessCode) throws Exception {
+        if (sessCode == null) {
+            return null;
+        }
+        RegInfo user = userDao.getUser(userId);
+        if (user == null || !sessCode.equals(user.getSessCode())) {
+            return null;
+        }
+        return user;
+    }
 
     /**
      * 信用分明细
@@ -2393,4 +2404,299 @@ public class GroupCreditAction extends GameStrutsAction {
             OutputUtil.output(1, "操作失败：请联系系统管理员", getRequest(), getResponse(), false);
         }
     }
+
+
+    /**
+     * 预警分列表
+     */
+    public void groupWarnList() {
+        if ("0".equals(ResourcesConfigsUtil.loadServerPropertyValue("group_warn_switch"))) {
+            OutputUtil.output(-1, "未开启此功能", getRequest(), getResponse(), false);
+            return;
+        }
+
+        Map<String, String> params = null;
+        try {
+            params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.debug("teamList|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, "签名验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = NumberUtils.toLong(params.get("userId"), 0);
+            RegInfo user = checkSessCodeNew(userId, params.get("sessCode"));
+            if (user == null) {
+                OutputUtil.output(-2, "身份信息验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            int groupId = NumberUtils.toInt(params.get("groupId"), -1);
+            int pageNo = NumberUtils.toInt(params.get("pageNo"), 1);
+            int pageSize = NumberUtils.toInt(params.get("pageSize"), 30);
+
+            String keyWord = params.get("keyWord");
+
+            pageNo = pageNo < 0 ? 1 : pageNo;
+            pageSize = pageSize < 0 ? 5 : pageSize > 30 ? 30 : pageSize;
+
+            GroupUser groupUser = groupDao.loadGroupUser(userId,groupId);
+            if (groupUser == null) {
+                OutputUtil.output(1, "参数错误", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupInfo groupInfo = groupDao.loadGroupInfo(groupId,0);
+            if (groupInfo == null) {
+                OutputUtil.output(4, "亲友圈不存在", getRequest(), getResponse(), false);
+                return;
+            }
+            JSONObject json = new JSONObject();
+            json.put("pageNo", pageNo);
+            json.put("pageSize", pageSize);
+
+            List<Map<String, Object>> groupWarnList = getGroupWarnList(groupUser,groupId, keyWord, pageNo, pageSize);
+
+            json.put("groupWarnList", groupWarnList);
+            OutputUtil.output(0, json, getRequest(), getResponse(), false);
+        } catch (Exception e) {
+            LOGGER.error("groupWarnList|error|" + JSON.toJSONString(params), e.getMessage(), e);
+            OutputUtil.output(1, "操作失败：请联系系统管理员", getRequest(), getResponse(), false);
+        }
+    }
+
+
+    private List<Map<String, Object>> getGroupWarnList(GroupUser groupUser,long groupId,  String keyWord, int pageNo, int pageSize){
+        try {
+            if(GroupConstants.isMasterOrAdmin(groupUser.getUserRole())){
+                return groupWarnDao.selectGroupWarnListForMaster(groupId, keyWord, pageNo, pageSize);
+            }else if (GroupConstants.isTeamLeader(groupUser.getUserRole())) {
+                return groupWarnDao.selectGroupWarnListForTeamLeader(groupId,groupUser.getUserGroup(), keyWord, pageNo, pageSize);
+            }else if(GroupConstants.isPromotor(groupUser.getUserRole())){
+                return groupWarnDao.selectGroupWarnListForPromoter(groupId,groupUser.getUserGroup(),groupUser.getPromoterLevel(), keyWord, pageNo, pageSize);
+            }
+        }catch (Exception e) {
+            LOGGER.error("getGroupWarnList|error|" + groupUser.getUserId()+"|"+groupId+"|"+keyWord, e.getMessage(), e);
+            OutputUtil.output(1, "预警分列表查询失败", getRequest(), getResponse(), false);
+        }
+        return new ArrayList<Map<String, Object>>();
+    }
+
+
+    /**
+     * 添加预警分设置
+     */
+    public void addGroupWarn() {
+        if ("0".equals(ResourcesConfigsUtil.loadServerPropertyValue("group_warn_switch"))) {
+            OutputUtil.output(-1, "未开启此功能", getRequest(), getResponse(), false);
+            return;
+        }
+        Map<String, String> params = null;
+        try {
+            params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.debug("teamList|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, "签名验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = NumberUtils.toLong(params.get("userId"), 0);
+            RegInfo user = checkSessCodeNew(userId, params.get("sessCode"));
+            if (user == null) {
+                OutputUtil.output(-2, "身份信息验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            int groupId = NumberUtils.toInt(params.get("groupId"), -1);
+            long targetUserId = NumberUtils.toLong(params.get("targetUserId"), 0);
+            if (targetUserId <= 0) {
+                OutputUtil.output(1, "参数错误", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupUser groupUser = groupDao.loadGroupUser(userId,groupId);
+            if (groupUser == null) {
+                OutputUtil.output(1, "参数错误", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupInfo groupInfo = groupDao.loadGroupInfo(groupId,0);
+            if (groupInfo == null) {
+                OutputUtil.output(4, "亲友圈不存在", getRequest(), getResponse(), false);
+                return;
+            }
+//            RegInfo regInfo = this.userDao.getUser(targetUserId);
+//            if (regInfo == null) {
+//                OutputUtil.output(1, "玩家不存在", getRequest(), getResponse(), false);
+//                return;
+//            }
+            List<GroupWarn> warnList = groupWarnDao.getGroupWarnByUserIdAndGroupId(targetUserId,groupId);
+            if(warnList!=null && warnList.size() > 0){
+                OutputUtil.output(1, "请不要重复添加", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupUser target = groupDao.loadGroupUser(targetUserId,groupId );
+            GroupUser operUser = groupDao.loadGroupUser(userId,groupId);
+            if (target == null || operUser == null) {
+                OutputUtil.output(1, "亲友圈中找不到此玩家", getRequest(), getResponse(), false);
+                return;
+            }
+            if(GroupConstants.isMember(target.getUserRole())){
+                OutputUtil.output(1, "不能给普通成员设置", getRequest(), getResponse(), false);
+                return;
+            }
+            //判断是不是我的直系下级
+            if(!GroupConstants.isNextLevel(operUser,target)){
+                OutputUtil.output(2,"目标不是直接下级", getRequest(), getResponse(), false);
+                return;
+            }
+
+            GroupWarn groupWarn = new GroupWarn();
+            groupWarn.setGroupId(groupId);
+            groupWarn.setUserId(targetUserId);
+            groupWarn.setWarnSwitch(0);
+            groupWarn.setWarnScore(0);
+            groupWarn.setCreateTime(System.currentTimeMillis());
+            groupWarnDao.insertGroupWarn(groupWarn);
+            List<Map<String, Object>> groupWarnList = getGroupWarnList(operUser,groupId,  targetUserId+"", 1, 10);
+
+            JSONObject json = new JSONObject();
+            json.put("groupWarnList", groupWarnList);
+            OutputUtil.output(0, json, getRequest(), getResponse(), false);
+        } catch (Exception e) {
+            LOGGER.error("addGroupWarn|error|" + JSON.toJSONString(params), e.getMessage(), e);
+            OutputUtil.output(1, "操作失败：请联系系统管理员", getRequest(), getResponse(), false);
+        }
+    }
+
+
+    /**
+     * 修改预警分设置
+     */
+    public void updateGroupWarn() {
+        if ("0".equals(ResourcesConfigsUtil.loadServerPropertyValue("group_warn_switch"))) {
+            OutputUtil.output(-1, "未开启此功能", getRequest(), getResponse(), false);
+            return;
+        }
+        Map<String, String> params = null;
+        try {
+            params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.debug("teamList|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, "签名验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = NumberUtils.toLong(params.get("userId"), 0);
+            RegInfo user = checkSessCodeNew(userId, params.get("sessCode"));
+            if (user == null) {
+                OutputUtil.output(-2, "身份信息验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            int groupId = NumberUtils.toInt(params.get("groupId"), -1);
+            long targetUserId = NumberUtils.toLong(params.get("targetUserId"), 0);
+            if (targetUserId <= 0) {
+                OutputUtil.output(1, "参数错误", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupUser groupUser = groupDao.loadGroupUser(userId,groupId);
+            if (groupUser == null) {
+                OutputUtil.output(1, "参数错误", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupInfo groupInfo = groupDao.loadGroupInfo(groupId,0);
+            if (groupInfo == null) {
+                OutputUtil.output(4, "亲友圈不存在", getRequest(), getResponse(), false);
+                return;
+            }
+//            RegInfo regInfo = this.userDao.getUser(targetUserId);
+//            if (regInfo == null) {
+//                OutputUtil.output(1, "玩家不存在", getRequest(), getResponse(), false);
+//                return;
+//            }
+            List<GroupWarn> warnList = groupWarnDao.getGroupWarnByUserIdAndGroupId(targetUserId,groupId);
+            if(warnList==null || warnList.size() <= 0){
+                OutputUtil.output(1, "数据不存在，请先添加", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupUser target = groupDao.loadGroupUser(targetUserId,groupId );
+            GroupUser operUser = groupDao.loadGroupUser(userId,groupId );
+            if (target == null || operUser == null) {
+                OutputUtil.output(1, "亲友圈中找不到此玩家", getRequest(), getResponse(), false);
+                return;
+            }
+            // 判断是不是我的直系下级
+            if(!GroupConstants.isNextLevel(operUser,target)){
+                OutputUtil.output(2,"目标不是直接下级", getRequest(), getResponse(), false);
+                return;
+            }
+
+            int warnScore = NumberUtils.toInt(params.get("warnScore"), 0);
+            int warnSwitch = NumberUtils.toInt(params.get("warnSwitch"), 0);
+            if(warnScore <0){
+                OutputUtil.output(1, "请不要设置负数", getRequest(), getResponse(), false);
+                return;
+            }
+
+            groupWarnDao.updateGroupWarn(groupId,targetUserId,warnScore,warnSwitch);
+
+            List<Map<String, Object>> groupWarnList = getGroupWarnList(operUser,groupId,  targetUserId+"", 1, 10);
+
+            JSONObject json = new JSONObject();
+            json.put("groupWarnList", groupWarnList);
+            OutputUtil.output(0, json, getRequest(), getResponse(), false);
+        } catch (Exception e) {
+            LOGGER.error("updateGroupWarn|error|" + JSON.toJSONString(params), e.getMessage(), e);
+            OutputUtil.output(1, "操作失败：请联系系统管理员", getRequest(), getResponse(), false);
+        }
+    }
+
+    /**
+     * 删除预警分设置
+     */
+    public void deleteGroupWarn() {
+        Map<String, String> params = null;
+        try {
+            params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.debug("teamList|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, "签名验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = NumberUtils.toLong(params.get("userId"), 0);
+            RegInfo user = checkSessCodeNew(userId, params.get("sessCode"));
+            if (user == null) {
+                OutputUtil.output(-2, "身份信息验证失败", getRequest(), getResponse(), false);
+                return;
+            }
+            int groupId = NumberUtils.toInt(params.get("groupId"), -1);
+            long targetUserId = NumberUtils.toLong(params.get("targetUserId"), 0);
+            if (targetUserId <= 0) {
+                OutputUtil.output(1, "参数错误", getRequest(), getResponse(), false);
+                return;
+            }
+            List<GroupWarn> warnList = groupWarnDao.getGroupWarnByUserIdAndGroupId(targetUserId,groupId);
+            if(warnList==null || warnList.size() <= 0){
+                OutputUtil.output(1, "数据不存在", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupUser target = groupDao.loadGroupUser(targetUserId,groupId);
+            GroupUser operUser = groupDao.loadGroupUser(userId,groupId );
+
+            if (target == null || operUser == null) {
+                OutputUtil.output(1, "亲友圈中找不到此玩家", getRequest(), getResponse(), false);
+                return;
+            }
+            //判断是不是我的直系下级
+            if(!GroupConstants.isNextLevel(operUser,target)){
+//            if (target.getPromoterId() != userId) {
+                OutputUtil.output(2,"目标不是直接下级", getRequest(), getResponse(), false);
+                return;
+            }
+            groupWarnDao.deleteGroupWarn(groupId,targetUserId);
+
+            JSONObject json = new JSONObject();
+            json.put("groupId", groupId);
+            json.put("targetUserId", targetUserId);
+            OutputUtil.output(0, json, getRequest(), getResponse(), false);
+        } catch (Exception e) {
+            LOGGER.error("deleteGroupWarn|error|" + JSON.toJSONString(params), e.getMessage(), e);
+            OutputUtil.output(1, "操作失败：请联系系统管理员", getRequest(), getResponse(), false);
+        }
+    }
+
+
+
 }

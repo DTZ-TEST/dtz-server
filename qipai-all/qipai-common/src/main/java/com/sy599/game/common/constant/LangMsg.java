@@ -153,6 +153,7 @@ public final class LangMsg extends ResourceHandler {
     public static final String code_908 = "code_908";//该{0}不合法哦！请另取高名！
     public static final String code_909 = "code_909";//{0}暂未开放！
     public static final String code_910 = "code_910";//50元余额以上才可下注，请您先充值噢！
+    public static final String code_911 = "code_911";//您暂时无法游戏，请联系您的上级-{0}
     public static final String other_err_78 = "other_err_78";//试炼NPC
 
     /**
@@ -294,6 +295,7 @@ public final class LangMsg extends ResourceHandler {
         langMap.put("code_908","该{0}不合法哦！请另取高名！");
         langMap.put("code_909","{0}暂未开放！");
         langMap.put("code_910", "50元余额以上才可下注，请您先充值噢！");
+        langMap.put("code_911","您暂时无法游戏，请联系您的上级-{0}");
         langMap.put("other_err_78","试炼NPC");
 
     }

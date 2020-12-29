@@ -44,6 +44,10 @@
         <property name="sqlMapClient" ref="sqlMapClient" />
     </bean>
 
+	<bean id="groupWarnDao" class="com.sy.sanguo.game.dao.group.GroupWarnDao">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+
     <bean id="userLotteryStatisticsDao" class="com.sy.sanguo.game.dao.UserLotteryStatisticsDaoImpl">
         <property name="sqlMapClient" ref="sqlMapClient" />
     </bean>
@@ -163,7 +167,9 @@
         <property name="groupCreditDao" ref="groupCreditDao" />
         <property name="userDao" ref="userDao" />
         <property name="dataStatisticsDao" ref="dataStatisticsDao" />
+		<property name="groupWarnDao" ref="groupWarnDao" />
     </bean>
+
 
     <bean id="bjdAction" class="com.sy.sanguo.game.action.BjdAction" scope="request">
         <property name="userDao" ref="userDao" />

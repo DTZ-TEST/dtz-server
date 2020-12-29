@@ -72,6 +72,7 @@
 	<sqlMap resource="serverconfig/redbagInfo.xml" />
 	<sqlMap resource="serverconfig/userCardRecord.xml" />
 	<sqlMap resource="serverconfig/t_lhd_record.xml" />
+	<sqlMap resource="serverconfig/t_group_warn.xml" />
     <sqlMap resource="serverconfig/t_group_credit.xml" />
 	<!-- List more here... <sqlMap resource="serverconfig/leagueInfo.xml"/>
 		<sqlMap resource="com/mydomain/data/Order.xml"/> <sqlMap resource="com/mydomain/data/Documents.xml"/> -->

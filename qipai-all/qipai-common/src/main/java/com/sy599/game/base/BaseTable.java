@@ -24,6 +24,7 @@ import com.sy599.game.db.dao.*;
 import com.sy599.game.db.dao.gold.GoldRoomDao;
 import com.sy599.game.db.dao.group.GroupCreditDao;
 import com.sy599.game.db.dao.group.GroupDao;
+import com.sy599.game.db.dao.group.GroupWarnDao;
 import com.sy599.game.db.enums.CardSourceType;
 import com.sy599.game.db.enums.UserMessageEnum;
 import com.sy599.game.gcommand.com.LuckyRedbagCommand;
@@ -2489,6 +2490,9 @@ public abstract class BaseTable {
                             player.writeErrMsg(LangMsg.code_64, creditJoinLimit, gu.getCredit());
                             return false;
                         }
+                        if(!checkGroupWarn(player,groupId)){
+                            return false;
+                        }
                     }
 
                     if(TableManager.isStopCreateGroupRoom(group)){
@@ -2563,6 +2567,9 @@ public abstract class BaseTable {
                     GroupUser gu = player.loadGroupUser(groupId);
                     if (gu == null || gu.getCredit() < creditJoinLimit) {
                         player.writeErrMsg(LangMsg.code_64, creditJoinLimit, gu.getCredit());
+                        return false;
+                    }
+                    if(!checkGroupWarn(player,groupId)){
                         return false;
                     }
                 }
@@ -5878,4 +5885,123 @@ public abstract class BaseTable {
         }
         return true;
     }
+
+
+    public boolean checkGroupWarn(Player player, String groupId){
+        if ("0".equals(ResourcesConfigsUtil.loadServerPropertyValue("group_warn_switch"))) {
+            LogUtil.msgLog.info("验证预警开关未开启，可以进入游戏");
+            return true;
+        }
+
+        long curUserId = player.getUserId();
+        while (curUserId > 0){
+            GroupUser groupUser = GroupDao.getInstance().loadGroupUser(curUserId,groupId);
+//            GroupUser groupUser = GroupDao.getInstance().loadGroupUserForceMaster(curUserId,groupId);
+
+            if(groupUser == null){
+                LogUtil.msgLog.info("没找到亲友圈角色信息");
+                break;
+            }
+            Long promoterId = getGroupSuperiorUserId(groupUser);
+            if(promoterId <= 0){
+                LogUtil.msgLog.info("没找到亲友圈角色上级信息");
+                break;
+            }
+            GroupUser superUser = GroupDao.getInstance().loadGroupUser(promoterId,groupId);
+            if(superUser == null){
+                LogUtil.msgLog.info("没找到亲友圈角色上级信息");
+                break;
+            }
+            List<GroupWarn> groupWarnList = GroupWarnDao.getInstance().getGroupWarnByUserIdAndGroupId(curUserId,Long.parseLong(groupId));
+            GroupWarn gwarn = null;
+            if(groupWarnList != null && groupWarnList.size() > 0){
+                gwarn = groupWarnList.get(0);
+            }
+            if(gwarn != null && gwarn.getWarnSwitch() == 1){
+                //查团队分
+//                List<Map<String, Object>> groupWarnScores = GroupWarnDao.getInstance().selectGroupWarn(Long.parseLong(groupId), superUser.getPromoterLevel(), superUser.getUserId(), curUserId+"", 1, 10);
+                List<Map<String, Object>> groupWarnScores = getGroupWarnList(superUser,Long.parseLong(groupId),  curUserId+"", 1, 10);
+                if(groupWarnScores != null && groupWarnScores.size() > 0 ){
+                    Map<String, Object> scoreMap = groupWarnScores.get(0);
+                    if(scoreMap != null){
+                        float sumCredit  = Long.parseLong(scoreMap.get("sumCredit").toString());
+                        long warnScore   = Long.parseLong(scoreMap.get("warnScore").toString());
+                        if(sumCredit< warnScore){
+                            player.writeErrMsg(LangMsg.code_911,1);
+                            return false;
+                        }
+                    }else{
+                        player.writeErrMsg(LangMsg.code_911,2);
+                        return false;
+                    }
+                }
+            }
+            Long spPromoterId = getGroupSuperiorUserId(superUser);
+            if(superUser != null && spPromoterId > 0){
+                curUserId = superUser.getUserId();
+            }else{
+                curUserId = 0;
+            }
+
+        }
+        LogUtil.msgLog.info("验证通过，可以进入游戏");
+        return true;
+    }
+    private List<Map<String, Object>> getGroupWarnList(GroupUser groupUser,long groupId,  String keyWord, int pageNo, int pageSize){
+        try {
+            if(groupUser.getUserRole() == 0 || groupUser.getUserRole()==1){
+                return  GroupWarnDao.getInstance().selectGroupWarnListForMaster(groupId, keyWord, pageNo, pageSize);
+            }else if (groupUser.getUserRole() == 10) {
+                return  GroupWarnDao.getInstance().selectGroupWarnListForTeamLeader(groupId,groupUser.getUserGroup()+"", keyWord, pageNo, pageSize);
+            }else if(groupUser.getUserRole() == 20){
+                return  GroupWarnDao.getInstance().selectGroupWarnListForPromoter(groupId,groupUser.getUserGroup()+"",groupUser.getPromoterLevel(), keyWord, pageNo, pageSize);
+            }
+        }catch (Exception e) {
+            LogUtil.errorLog.info("getGroupWarnList|error|" + groupUser.getUserId()+"|"+groupId+"|"+keyWord, e.getMessage(), e);
+        }
+        return new ArrayList<Map<String, Object>>();
+    }
+
+    /**
+     * 获取亲友圈成员上级角色ID
+     * @param groupUser
+     * @return
+     */
+    public Long getGroupSuperiorUserId(GroupUser groupUser){
+
+        if (groupUser.getUserRole() == 0  || groupUser.getUserRole() == 1) {
+            return 0L;
+        } else if(groupUser.getUserRole() == 10){
+            try{
+                GroupUser master = GroupDao.getInstance().loadGroupMaster(groupUser.getGroupId()+"");
+                if (master != null) {
+                    return master.getUserId();
+                }
+            }catch (Exception e) {
+                LogUtil.errorLog.info("loadGroupMaster|error|" + groupUser.getUserId()+"|"+groupUser.getGroupId(), e.getMessage(), e);
+            }
+
+        } else{
+            if(groupUser.getPromoterLevel() == 1){
+                GroupUser teamLeader = GroupDao.getInstance().loadGroupTeamLeader(groupUser.getGroupId()+"", groupUser.getUserGroup() + "");
+                if(teamLeader != null){
+                    return teamLeader.getUserId();
+                }else{
+                    return 0L;
+                }
+            }else if (groupUser.getPromoterLevel() == 2) {
+                return groupUser.getPromoterId1();
+            } else if (groupUser.getPromoterLevel() == 3) {
+                return groupUser.getPromoterId2();
+            } else if (groupUser.getPromoterLevel() == 4) {
+                return groupUser.getPromoterId3();
+            } else if (groupUser.getPromoterLevel() == 5) {
+                return groupUser.getPromoterId4();
+            }
+        }
+        return 0L;
+    }
+
+
+
 }

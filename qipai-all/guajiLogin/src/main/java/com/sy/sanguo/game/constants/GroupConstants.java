@@ -80,6 +80,11 @@ public class GroupConstants {
      * @return
      */
     public static boolean isNextLevel(GroupUser groupUser, GroupUser lower) {
+        if(GroupConstants.isMasterOrAdmin(groupUser.getUserRole())){
+            if (GroupConstants.isTeamLeader(lower.getUserRole())) {
+                return true;
+            }
+        }
         if (!groupUser.getUserGroup().equals(lower.getUserGroup())) {
             return false;
         }
@@ -87,7 +92,7 @@ public class GroupConstants {
             if (lower.getPromoterLevel() == 1) {
                 return true;
             }
-        } else if (GroupConstants.isPromotor(groupUser.getUserRole())) {
+        }else if (GroupConstants.isPromotor(groupUser.getUserRole())) {
             if (groupUser.getPromoterLevel() == 1 && lower.getPromoterId1() == groupUser.getUserId() && lower.getPromoterLevel() == 2) {
                 return true;
             } else if (groupUser.getPromoterLevel() == 2 && lower.getPromoterId2() == groupUser.getUserId() && lower.getPromoterLevel() == 3) {
