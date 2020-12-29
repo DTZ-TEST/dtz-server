@@ -29,23 +29,6 @@ echo PACKAGE_DIR="${PACKAGE_DIR}"
 
 echo ""
 echo ""
-echo "---------------------read properties---------------------"
-cd ${OUT_DIR}
-declare -A map
-for line in  `cat ${PROP_FILE} | grep -v "#" | awk '{if(length !=0) print $0}'`
-do
-    if [[ ! ${line} =~ ^\#.* ]]; then
-        key=`echo ${line}`
-        map[${key}]="1"
-    fi
-done
-
-for key in ${!map[@]};do
-    echo ${key}=${map[${key}]}
-done
-
-echo ""
-echo ""
 echo "---------------------git update---------------------"
 cd ${PROJECT_DIR}
 
@@ -61,6 +44,25 @@ fi
 #SVN_VERSION=`svn info | grep Revision: | awk '{print $2}'`
 SVN_VERSION=""
 echo SVN_VERSION=${SVN_VERSION}
+
+
+echo ""
+echo ""
+echo "---------------------read properties---------------------"
+cd ${OUT_DIR}
+declare -A map
+for line in  `cat ${PROP_FILE} | grep -v "#" | awk '{if(length !=0) print $0}'`
+do
+    if [[ ! ${line} =~ ^\#.* ]]; then
+        key=`echo ${line}`
+        map[${key}]="1"
+    fi
+done
+
+for key in ${!map[@]};do
+    echo ${key}=${map[${key}]}
+done
+
 
 
 echo ""

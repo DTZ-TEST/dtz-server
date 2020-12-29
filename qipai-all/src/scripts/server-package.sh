@@ -28,6 +28,24 @@ echo OUT_DIR=${OUT_DIR}
 echo PROP_FILE=${PROP_FILE}
 echo PACKAGE_DIR="${PACKAGE_DIR}"
 
+echo ""
+echo ""
+echo "---------------------git update---------------------"
+cd ${PROJECT_DIR}
+
+git pull
+
+if [ $? -eq 0 ]; then
+    echo "git update successful"
+else
+    echo "git update error"
+    exit 1
+fi
+
+#SVN_VERSION=`svn info | grep Revision: | awk '{print $2}'`
+SVN_VERSION=""
+echo SVN_VERSION=${SVN_VERSION}
+
 
 echo ""
 echo ""
@@ -46,23 +64,6 @@ for key in ${!map[@]};do
     echo ${key}=${map[${key}]}
 done
 
-echo ""
-echo ""
-echo "---------------------git update---------------------"
-cd ${PROJECT_DIR}
-
-git pull
-
-if [ $? -eq 0 ]; then
-    echo "git update successful"
-else
-    echo "git update error"
-    exit 1
-fi
-
-#SVN_VERSION=`svn info | grep Revision: | awk '{print $2}'`
-SVN_VERSION=""
-echo SVN_VERSION=${SVN_VERSION}
 
 
 echo ""
