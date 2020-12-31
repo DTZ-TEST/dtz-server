@@ -2470,7 +2470,7 @@ public class GroupCreditAction extends GameStrutsAction {
             }else if (GroupConstants.isTeamLeader(groupUser.getUserRole())) {
                 return groupWarnDao.selectGroupWarnListForTeamLeader(groupId,groupUser.getUserGroup(), keyWord, pageNo, pageSize);
             }else if(GroupConstants.isPromotor(groupUser.getUserRole())){
-                return groupWarnDao.selectGroupWarnListForPromoter(groupId,groupUser.getUserGroup(),groupUser.getPromoterLevel(), keyWord, pageNo, pageSize);
+                return groupWarnDao.selectGroupWarnListForPromoter(groupUser.getUserId(),groupId,groupUser.getUserGroup(),groupUser.getPromoterLevel(), keyWord, pageNo, pageSize);
             }
         }catch (Exception e) {
             LOGGER.error("getGroupWarnList|error|" + groupUser.getUserId()+"|"+groupId+"|"+keyWord, e.getMessage(), e);

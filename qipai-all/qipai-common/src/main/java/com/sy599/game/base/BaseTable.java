@@ -5954,7 +5954,7 @@ public abstract class BaseTable {
             }else if (groupUser.getUserRole() == 10) {
                 return  GroupWarnDao.getInstance().selectGroupWarnListForTeamLeader(groupId,groupUser.getUserGroup()+"", keyWord, pageNo, pageSize);
             }else if(groupUser.getUserRole() == 20){
-                return  GroupWarnDao.getInstance().selectGroupWarnListForPromoter(groupId,groupUser.getUserGroup()+"",groupUser.getPromoterLevel(), keyWord, pageNo, pageSize);
+                return  GroupWarnDao.getInstance().selectGroupWarnListForPromoter(groupUser.getUserId(),groupId,groupUser.getUserGroup()+"",groupUser.getPromoterLevel(), keyWord, pageNo, pageSize);
             }
         }catch (Exception e) {
             LogUtil.errorLog.info("getGroupWarnList|error|" + groupUser.getUserId()+"|"+groupId+"|"+keyWord, e.getMessage(), e);

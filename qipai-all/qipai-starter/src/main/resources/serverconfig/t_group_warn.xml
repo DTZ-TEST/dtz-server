@@ -111,7 +111,7 @@
         w.warnSwitch
         FROM t_group_user gu ,t_group_warn w
         where
-        gu.groupId = #groupId#
+        w.groupId = #groupId#
         and (gu.userRole = 0 or gu.userRole = 10)
         and gu.userGroup != 0
         and w.userId = gu.userId ) gw, user_inf u
@@ -155,7 +155,8 @@
         gu.promoterId1 as promoterId,
         gu.creditCommissionRate,
         u.name,
-        u.headimgurl
+        u.headimgurl,
+        gu.groupId
         FROM t_group_user gu , user_inf u
         where
         gu.groupId = #groupId#
@@ -167,7 +168,7 @@
                 (u.userId = #targetUserId# OR u.name LIKE concat('%', #targetUserId#, '%'))
             </isPropertyAvailable>
         </dynamic>
-        ) gg,t_group_warn gw where gg.userId = gw.userId
+        ) gg,t_group_warn gw where gg.userId = gw.userId and gg.groupId = gw.groupId
 
         ) as d1 ,
         (
@@ -203,7 +204,8 @@
         gu.$promoterIdKey2$ as promoterId,
         gu.creditCommissionRate,
         u.name,
-        u.headimgurl
+        u.headimgurl,
+        gu.groupId
         FROM t_group_user gu , user_inf u
         where
         gu.groupId = #groupId#
@@ -217,7 +219,7 @@
                 (u.userId = #targetUserId# OR u.name LIKE concat('%', #targetUserId#, '%'))
             </isPropertyAvailable>
         </dynamic>
-        )gg,t_group_warn gw where gg.userId = gw.userId
+        )gg,t_group_warn gw where gg.userId = gw.userId and gg.groupId = gw.groupId
         ) as d1 ,
         (
         SELECT

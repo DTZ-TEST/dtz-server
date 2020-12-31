@@ -76,10 +76,11 @@ public class GroupWarnDao extends BaseDao {
 		map.put("pageSize", pageSize);
 		return ( List<Map<String, Object>>)this.getSqlLoginClient().queryForList("groupWarn.groupWarnListForTeamLeader", map);
 	}
-	public List<Map<String, Object>> selectGroupWarnListForPromoter(long groupId,String userGroup,int promoterLevel,  String keyWord, int pageNo, int pageSize) throws SQLException {
+	public List<Map<String, Object>> selectGroupWarnListForPromoter(long userId,long groupId,String userGroup,int promoterLevel,  String keyWord, int pageNo, int pageSize) throws SQLException {
 		Map<String, Object> map = new HashMap<>(8);
 		map.put("groupId", groupId);
 		map.put("userGroup", userGroup);
+		map.put("userId", userId);
 		if(promoterLevel > 0 && promoterLevel < 4){
 			map.put("promoterIdKey1", " promoterId" + promoterLevel);
 			map.put("promoterIdKey2", " promoterId" + (promoterLevel + 1));
