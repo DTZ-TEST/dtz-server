@@ -1238,7 +1238,7 @@ public class GroupAction extends GameStrutsAction {
     public void updateGroupUser() {
         try {
             Map<String, String> params = UrlParamUtil.getParameters(getRequest());
-            LOGGER.info("params:{}", params);
+            LOGGER.info("updateGroupUser|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, "签名验证失败", getRequest(), getResponse(), false);
                 return;
@@ -1286,6 +1286,11 @@ public class GroupAction extends GameStrutsAction {
 
                 if (userRole0!= 0 && userRole0 != 10) {
                     OutputUtil.output(6, "您不是群主(或组长)，无法操作！", getRequest(), getResponse(), false);
+                    return;
+                }
+
+                if(userRole == 0){
+                    OutputUtil.output(4, "已关闭转让群主功能", getRequest(), getResponse(), false);
                     return;
                 }
 
