@@ -1267,7 +1267,7 @@ public class GroupAction extends GameStrutsAction {
                 long mUserId = NumberUtils.toLong(params.get("mUserId"), -1);
                 GroupUser groupUser0 = mUserId <= 0 ? null : groupDao.loadGroupUser(mUserId, groupId);
 
-                if (groupUser0 == null || userId == mUserId) {
+                if (groupUser0 == null || userId == mUserId || sUserId != mUserId) {
                     OutputUtil.output(4, "参数错误", getRequest(), getResponse(), false);
                     return;
                 }
