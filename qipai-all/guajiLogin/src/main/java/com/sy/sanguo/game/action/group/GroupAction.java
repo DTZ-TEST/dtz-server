@@ -1259,7 +1259,10 @@ public class GroupAction extends GameStrutsAction {
                 OutputUtil.output(3, "尚未加入军团", getRequest(), getResponse(), false);
                 return;
             }
-
+            long sUserId = NumberUtils.toLong(params.get("sUserId"), -1);
+            if(!checkSessCode(sUserId,params.get("sessCode"))){
+                return;
+            }
             if ((userRole >= 0 && userRole <= 2)||userRole==10) {
                 long mUserId = NumberUtils.toLong(params.get("mUserId"), -1);
                 GroupUser groupUser0 = mUserId <= 0 ? null : groupDao.loadGroupUser(mUserId, groupId);
@@ -1766,7 +1769,7 @@ public class GroupAction extends GameStrutsAction {
     public void responseGroupReview() {
         try {
             Map<String, String> params = UrlParamUtil.getParameters(getRequest());
-            LOGGER.info("params:{}", params);
+            LOGGER.info("responseGroupReview|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, "签名验证失败", getRequest(), getResponse(), false);
                 return;
@@ -5784,7 +5787,7 @@ public class GroupAction extends GameStrutsAction {
     public void updateGroupUserCredit() {
         try {
             Map<String, String> params = UrlParamUtil.getParameters(getRequest());
-            LOGGER.info("params:{}", params);
+            LOGGER.info("updateGroupUserCredit|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, "签名验证失败", getRequest(), getResponse(), false);
                 return;
