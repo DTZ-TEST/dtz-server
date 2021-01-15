@@ -12,6 +12,7 @@ import com.sy.mainland.util.CommonUtil;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.sy.sanguo.common.log.GameBackLogger;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TimeUtil {
 	public static int SENCOND_IN_MINILLS = 1000;
@@ -446,5 +447,22 @@ public final class TimeUtil {
         }
         return dayOffset;
     }
-
+	/**
+	 * 检查日期字符串格式是否是：yyyy-MM-dd HH:mm:ss
+	 *
+	 * @param dateStr
+	 * @return
+	 */
+	public static boolean checkDateFormat(String dateStr) {
+		if (StringUtils.isBlank(dateStr)) {
+			return false;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(def_format);
+		try {
+			sdf.parse(dateStr);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 }

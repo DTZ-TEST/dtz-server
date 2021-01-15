@@ -4606,31 +4606,37 @@ public class GroupAction extends GameStrutsAction {
                 OutputUtil.output(1, "参数错误", getRequest(), getResponse(), false);
                 return;
             }
-            int queryDate = NumberUtils.toInt(params.get("queryDate"), 1);
+            int queryDate = NumberUtils.toInt(params.get("queryDate"), 0);
             int pageNo = NumberUtils.toInt(params.get("pageNo"), 1);
             int pageSize = NumberUtils.toInt(params.get("pageSize"), 30);
             int tableType = NumberUtils.toInt(params.get("tableType"), -1); //-1：全部，1：非信用房，2：信用房
+            String startDate = params.get("startDate"); // 日期格式：2019-08-01 00:00:01
+            String endDate = params.get("endDate"); // 日期格式：2019-08-01 23:59:59
+            if ("".equals(queryDate) && (!TimeUtil.checkDateFormat(startDate) || !TimeUtil.checkDateFormat(endDate))) {
+                OutputUtil.output(3, "日期格式错误：" + startDate + "," + endDate, getRequest(), getResponse(), false);
+                return;
+            }
+            if(queryDate > 0){
+                // 默认取当天数据
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar ca = Calendar.getInstance();
+                switch(queryDate){
+                    case 2:
+                        ca.set(Calendar.DATE, ca.get(Calendar.DATE) - 1);
+                        break;
+                    case 3:
+                        ca.set(Calendar.DATE, ca.get(Calendar.DATE) - 2);
+                        break;
+                }
+                String strDate = sdf.format(ca.getTime());
+                if (!strDate.contains(" ")) {
+                    startDate = strDate + " 00:00:00";
+                }
+                if (!strDate.contains(" ")) {
+                    endDate = strDate + " 23:59:59";
+                }
+            }
 
-            // 默认取当天数据
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar ca = Calendar.getInstance();
-            switch(queryDate){
-                case 2:
-                    ca.set(Calendar.DATE, ca.get(Calendar.DATE) - 1);
-                    break;
-                case 3:
-                    ca.set(Calendar.DATE, ca.get(Calendar.DATE) - 2);
-                    break;
-            }
-            String strDate = sdf.format(ca.getTime());
-            String startDate = "";
-            String endDate = "";
-            if (!strDate.contains(" ")) {
-                startDate = strDate + " 00:00:00";
-            }
-            if (!strDate.contains(" ")) {
-                endDate = strDate + " 23:59:59";
-            }
             GroupUser groupUser = groupDao.loadGroupUser(NumberUtils.toLong(userId), NumberUtils.toLong(groupId));
             if (groupUser == null) {
                 OutputUtil.output(3, "您不是该军团成员", getRequest(), getResponse(), false);
@@ -5445,7 +5451,12 @@ public class GroupAction extends GameStrutsAction {
             String dateType = params.get("dateType");
             String selectType = params.get("selectType");        //1,通过keyWord查操作人 2,keyWord查被操作人 0都查
 //            int onlySeft = NumberUtils.toInt(params.get("onlySeft"), 0);    //子看
-
+            String startDate = params.get("startDate"); // 日期格式：2019-08-01 00:00:01
+            String endDate = params.get("endDate"); // 日期格式：2019-08-01 23:59:59
+            if ((dateType == null || "".equals(dateType))  && (!TimeUtil.checkDateFormat(startDate) || !TimeUtil.checkDateFormat(endDate))) {
+                OutputUtil.output(3, "日期格式错误：" + startDate + "," + endDate, getRequest(), getResponse(), false);
+                return;
+            }
             GroupUser groupUser = groupDao.loadGroupUser(userId, groupId);
             if (groupUser == null) {
                 OutputUtil.output(3, "您不是该军团成员", getRequest(), getResponse(), false);
@@ -5480,14 +5491,7 @@ public class GroupAction extends GameStrutsAction {
             if (StringUtils.isNotBlank(keyWord)) {
                 map.put("keyWord", keyWord);
             }
-            int dayOffset = 0;
-            if ("2".equals(dateType)) {
-                //昨天
-                dayOffset = -1;
-            } else if ("3".equals(dateType)) {
-                //前天
-                dayOffset = -2;
-            }
+
             if (StringUtils.isNotBlank(userGroup)) {
                 map.put("userGroup", userGroup);
             }
@@ -5495,8 +5499,23 @@ public class GroupAction extends GameStrutsAction {
                 selectType = "0";
             }
             map.put("selectType", selectType);
-            map.put("startDate", TimeUtil.getStartOfDay(dayOffset));
-            map.put("endDate", TimeUtil.getEndOfDay(dayOffset));
+            if(dateType != null && !"".equals(dateType)){
+                int dayOffset = 0;
+                if ("2".equals(dateType)) {
+                    //昨天
+                    dayOffset = -1;
+                } else if ("3".equals(dateType)) {
+                    //前天
+                    dayOffset = -2;
+                }
+                map.put("startDate", TimeUtil.getStartOfDay(dayOffset));
+                map.put("endDate", TimeUtil.getEndOfDay(dayOffset));
+            }else{
+                map.put("startDate", startDate);
+                map.put("endDate", endDate);
+            }
+
+
             int count = this.groupDao.countGroupCreditLog(map);
             List<HashMap<String, Object>> resList = new ArrayList<>();
             if (count > 0) {

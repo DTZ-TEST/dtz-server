@@ -323,11 +323,14 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<GroupTableConfig>) this.getSqlMapClient().queryForList("groupCredit.loadAllGroupTableConfigByIds", map);
     }
 
-    public Integer countCreditCommissionLogForMaster(long groupId, long userId, String keyWord, String dateType) throws Exception {
+    public Integer countCreditCommissionLogForMaster(long groupId, long userId, String keyWord, String startDate,String endDate,String dateType) throws Exception {
 
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+             startDate = TimeUtil.getStartOfDay(dayOffset);
+             endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
+
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
@@ -342,11 +345,12 @@ public class GroupCreditDao extends CommonDaoImpl {
         return res != null ? res : 0;
     }
 
-    public List<HashMap<String, Object>> creditCommissionLogForMaster(long groupId, long userId, String dateType, String keyWord, int pageNo, int pageSize) throws Exception {
-
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public List<HashMap<String, Object>> creditCommissionLogForMaster(long groupId, long userId, String  startDate,String endDate,String dateType, String keyWord, int pageNo, int pageSize) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
@@ -362,15 +366,17 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.creditCommissionLogForMaster", map);
     }
 
-    public Long sumCommissionCreditLog(long groupId, long userId, String dateType) throws Exception {
-        return sumCommissionCreditLog(groupId, userId, null, dateType);
+    public Long sumCommissionCreditLog(long groupId, long userId, String startDate, String endDate,String dateType) throws Exception {
+        return sumCommissionCreditLog(groupId, userId, null,startDate,endDate, dateType);
     }
 
-    public Long sumCommissionCreditLog(long groupId, long userId, String userGroup, String dateType) throws Exception {
+    public Long sumCommissionCreditLog(long groupId, long userId, String userGroup,String startDate, String endDate, String dateType) throws Exception {
 
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
         map.put("userId", userId);
@@ -385,11 +391,13 @@ public class GroupCreditDao extends CommonDaoImpl {
     }
 
 
-    public Integer countCreditCommissionLogForTeamLeader(long groupId, long userId, int promoterLevel, String keyWord, String dateType) throws Exception {
+    public Integer countCreditCommissionLogForTeamLeader(long groupId, long userId, int promoterLevel, String keyWord, String startDate,String endDate,String dateType) throws Exception {
 
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
@@ -405,11 +413,12 @@ public class GroupCreditDao extends CommonDaoImpl {
         return res != null ? res : 0;
     }
 
-    public List<HashMap<String, Object>> creditCommissionLogForTeamLeader(long groupId, long userId, int promoterLevel, String dateType, String keyWord, int pageNo, int pageSize) throws Exception {
-
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public List<HashMap<String, Object>> creditCommissionLogForTeamLeader(long groupId, long userId, int promoterLevel, String startDate,String endDate,String dateType, String keyWord, int pageNo, int pageSize) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
         map.put("userId", userId);
@@ -424,11 +433,12 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.creditCommissionLogForTeamLeader", map);
     }
 
-    public Integer countCreditCommissionLogForPromoter(long groupId, long userId, int promoterLevel, String keyWord, String dateType) throws Exception {
-
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public Integer countCreditCommissionLogForPromoter(long groupId, long userId, int promoterLevel, String keyWord, String startDate,String endDate,String dateType) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
@@ -444,11 +454,12 @@ public class GroupCreditDao extends CommonDaoImpl {
         return res != null ? res : 0;
     }
 
-    public List<HashMap<String, Object>> creditCommissionLogForPromoter(long groupId, long userId, int promoterLevel, String dateType, String keyWord, int pageNo, int pageSize) throws Exception {
-
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public List<HashMap<String, Object>> creditCommissionLogForPromoter(long groupId, long userId, int promoterLevel, String startDate,String endDate,String dateType, String keyWord, int pageNo, int pageSize) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
         map.put("userId", userId);
@@ -464,11 +475,13 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.creditCommissionLogForPromoter", map);
     }
 
-    public List<HashMap<String, Object>> creditCommissionLogForPromoter4(long groupId, long userId, String dateType) throws Exception {
+    public List<HashMap<String, Object>> creditCommissionLogForPromoter4(long groupId, long userId, String startDate,String endDate,String dateType) throws Exception {
 
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
@@ -494,10 +507,13 @@ public class GroupCreditDao extends CommonDaoImpl {
     }
 
 
-    public HashMap<String, Object> searchCommissionLog(long groupId, long userId, long targetUserId, String dateType) throws Exception {
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public HashMap<String, Object> searchCommissionLog(long groupId, long userId, long targetUserId, String startDate, String endDate,String dateType) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
+
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", groupId);
         map.put("userId", userId);
@@ -508,11 +524,13 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (HashMap<String, Object>) this.getSqlMapClient().queryForObject("groupCredit.searchCommissionLog", map);
     }
 
-    public List<HashMap<String, Object>> creditZjsForMaster(long groupId, String dateType) throws Exception {
+    public List<HashMap<String, Object>> creditZjsForMaster(long groupId, String startDate,String endDate,String dateType) throws Exception {
 
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         HashMap<String, Object> map = new HashMap<>(8);
         map.put("groupId", groupId);
@@ -521,11 +539,12 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.creditZjsForMaster", map);
     }
 
-    public List<HashMap<String, Object>> creditZjsForTeamLeader(long groupId, String userGroup, int promoterLevel, String dateType) throws Exception {
-
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public List<HashMap<String, Object>> creditZjsForTeamLeader(long groupId, String userGroup, int promoterLevel, String startDate,String endDate,String dateType) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         HashMap<String, Object> map = new HashMap<>(8);
         map.put("groupId", groupId);
@@ -536,11 +555,12 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.creditZjsForTeamLeader", map);
     }
 
-    public List<HashMap<String, Object>> creditZjsForPromoter(long groupId, String userGroup, long promoterId, int promoterLevel, String dateType) throws Exception {
-
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public List<HashMap<String, Object>> creditZjsForPromoter(long groupId, String userGroup, long promoterId, int promoterLevel, String startDate,String endDate,String dateType) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         HashMap<String, Object> map = new HashMap<>(8);
         map.put("groupId", groupId);
@@ -552,11 +572,12 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.creditZjsForPromoter", map);
     }
 
-    public List<HashMap<String, Object>> creditZjsForPromoter4(long groupId, String userGroup, long promoterId, int promoterLevel, String dateType) throws Exception {
-
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+    public List<HashMap<String, Object>> creditZjsForPromoter4(long groupId, String userGroup, long promoterId, int promoterLevel, String startDate,String endDate,String dateType) throws Exception {
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
 
         HashMap<String, Object> map = new HashMap<>(8);
         map.put("groupId", groupId);
@@ -811,7 +832,7 @@ public class GroupCreditDao extends CommonDaoImpl {
         return (List<Map<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.userList", map);
     }
 
-    public int countCreditLogList(long groupId, long userId, int type, String dateType, int upOrDown) throws Exception {
+    public int countCreditLogList(long groupId, long userId, int type, String startDate,String endDate, int upOrDown,String dateType) throws Exception {
         Map<String, Object> map = new HashMap<>(8);
         map.put("groupId", groupId);
         map.put("userId", userId);
@@ -821,15 +842,17 @@ public class GroupCreditDao extends CommonDaoImpl {
         if (upOrDown != 0) {
             map.put("upOrDown", upOrDown);
         }
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+        if(dateType != null && !"".equals(dateType)){
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+            startDate = TimeUtil.getStartOfDay(dayOffset);
+            endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
         map.put("startDate", startDate);
         map.put("endDate", endDate);
         return (Integer) this.getSqlMapClient().queryForObject("groupCredit.countCreditLogList", map);
     }
 
-    public List<Map<String, Object>> creditLogList(long groupId, long userId, int type, String dateType, int upOrDown, int pageNo, int pageSize) throws Exception {
+    public List<Map<String, Object>> creditLogList(long groupId, long userId, int type, String startDate,String endDate, int upOrDown,String dateType, int pageNo, int pageSize) throws Exception {
         Map<String, Object> map = new HashMap<>(8);
         map.put("groupId", groupId);
         map.put("userId", userId);
@@ -841,9 +864,11 @@ public class GroupCreditDao extends CommonDaoImpl {
         }
         map.put("startNo", (pageNo - 1) * pageSize);
         map.put("pageSize", pageSize);
-        int dayOffset = TimeUtil.getDayOffset(dateType);
-        String startDate = TimeUtil.getStartOfDay(dayOffset);
-        String endDate = TimeUtil.getEndOfDay(dayOffset);
+        if(dateType != null && !"".equals(dateType)) {
+            int dayOffset = TimeUtil.getDayOffset(dateType);
+             startDate = TimeUtil.getStartOfDay(dayOffset);
+             endDate = TimeUtil.getEndOfDay(dayOffset);
+        }
         map.put("startDate", startDate);
         map.put("endDate", endDate);
         return (List<Map<String, Object>>) this.getSqlMapClient().queryForList("groupCredit.creditLogList", map);
