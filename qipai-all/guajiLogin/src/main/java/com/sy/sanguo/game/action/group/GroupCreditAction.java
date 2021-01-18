@@ -1993,6 +1993,13 @@ public class GroupCreditAction extends GameStrutsAction {
                 return;
             }
             String dateType = params.get("dateType"); // 1:今天,2:昨天,3:前天
+            String startDate = params.get("startDate"); // 日期格式：2019-08-01 00:00:01
+            String endDate = params.get("endDate"); // 日期格式：2019-08-01 23:59:59
+            if ((dateType==null  || "".equals(dateType)) && (!TimeUtil.checkDateFormat(startDate) || !TimeUtil.checkDateFormat(endDate))) {
+                OutputUtil.output(3, "日期格式错误：" + startDate + "," + endDate, getRequest(), getResponse(), false);
+                return;
+            }
+
             int count = 0;
             Long totalCommissionCredit = 0l;
             List<HashMap<String, Object>> dataList = null;
@@ -2008,10 +2015,10 @@ public class GroupCreditAction extends GameStrutsAction {
                 if (GroupConstants.isAdmin(groupUser.getUserRole())) {
                     masterId = groupDao.loadGroupMaster(String.valueOf(groupId)).getUserId();
                 }
-                count = groupCreditDao.countCreditCommissionLogByUserForMaster(groupId, userGroup, masterId, dateType);
+                count = groupCreditDao.countCreditCommissionLogByUserForMaster(groupId, userGroup, masterId, dateType,startDate,endDate);
                 if (count > 0) {
-                    dataList = groupCreditDao.creditCommissionLogByUserForMaster(groupId, userGroup, masterId, dateType, pageNo, pageSize);
-                    totalCommissionCredit = groupCreditDao.sumCommissionCreditLog(groupId, userId,"","", dateType);
+                    dataList = groupCreditDao.creditCommissionLogByUserForMaster(groupId, userGroup, masterId, dateType,startDate,endDate, pageNo, pageSize);
+                    totalCommissionCredit = groupCreditDao.sumCommissionCreditLog(groupId, userId,startDate,endDate, dateType);
                 } else {
                     dataList = Collections.emptyList();
                 }
@@ -2020,10 +2027,10 @@ public class GroupCreditAction extends GameStrutsAction {
                 // 小组长
                 Long promoterId = Long.valueOf(params.get("keyWord"));
                 userGroup = groupUser.getUserGroup();
-                count = groupCreditDao.countCreditCommissionLogByUser(groupId, userGroup, userId, promoterId, groupUser.getPromoterLevel(), dateType);
+                count = groupCreditDao.countCreditCommissionLogByUser(groupId, userGroup, userId, promoterId, groupUser.getPromoterLevel(), dateType,startDate,endDate);
                 if (count > 0) {
-                    dataList = groupCreditDao.creditCommissionLogByUser(groupId, userGroup, userId, promoterId, groupUser.getPromoterLevel(), dateType, pageNo, pageSize);
-                    totalCommissionCredit = groupCreditDao.sumCommissionCreditLog(groupId, userId,"","", dateType);
+                    dataList = groupCreditDao.creditCommissionLogByUser(groupId, userGroup, userId, promoterId, groupUser.getPromoterLevel(), dateType,startDate,endDate, pageNo, pageSize);
+                    totalCommissionCredit = groupCreditDao.sumCommissionCreditLog(groupId, userId,startDate,endDate, dateType);
                 } else {
                     dataList = Collections.emptyList();
                 }
@@ -2032,7 +2039,7 @@ public class GroupCreditAction extends GameStrutsAction {
                 return;
             }
 
-            List<HashMap<String, Object>> zjsList = groupCreditDao.creditZjsByUser(groupId, userGroup, 1, dateType);
+            List<HashMap<String, Object>> zjsList = groupCreditDao.creditZjsByUser(groupId, userGroup, 1, dateType,startDate,endDate);
             Map<String, HashMap<String, Object>> zjsMap = new HashMap<>();
             if (zjsList.size() > 0 && zjsList.size() > 0) {
                 for (HashMap<String, Object> zjs : zjsList) {
