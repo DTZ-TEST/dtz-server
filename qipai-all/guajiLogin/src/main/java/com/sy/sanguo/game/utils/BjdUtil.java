@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,16 @@ public class BjdUtil {
     public static final String url_transfer_group = url_base + "/agent/player/changeGroupMaster/wx_plat/mjqz";
     public static final String plat = "mjqz";
     public static final String sign_key = "0NUs3u0qpsfrB4k9";
+    public static final String sign_key_new = "szmUQrkBRv54cSOj";
+    public static long sign_key_time_out = 0L;
+
+    public static void init() throws Exception {
+        sign_key_time_out = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-01-21 11:00:00").getTime();
+    }
+
+    public static boolean useNewSignKey() {
+        return System.currentTimeMillis() > sign_key_time_out;
+    }
 
     /**
      * 签名验证
@@ -40,8 +51,14 @@ public class BjdUtil {
         for (String key : keys) {
             sb.append("&").append(key).append("=").append(params.get(key));
         }
-        sb.append("&key=").append(sign_key);
-        return sign.equalsIgnoreCase(MD5Util.getStringMD5(sb.toString(), "utf-8"));
+        String s1 = sb.toString() + "&key=" + sign_key;
+        String s2 = sb.toString() + "&key=" + sign_key_new;
+        if (useNewSignKey()) {
+            return sign.equalsIgnoreCase(MD5Util.getStringMD5(s2, "utf-8"));
+        } else {
+            return sign.equalsIgnoreCase(MD5Util.getStringMD5(s1, "utf-8"))
+                    || sign.equalsIgnoreCase(MD5Util.getStringMD5(s2, "utf-8"));
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ import com.sy.sanguo.common.executor.task.TenMinuteFixedRateTask;
 import com.sy.sanguo.common.util.KeyWordsFilter;
 
 import com.sy.sanguo.common.util.TaskExecutor;
+import com.sy.sanguo.game.utils.BjdUtil;
 import com.sy599.sanguo.util.ResourcesConfigsUtil;
 import net.sy599.common.security.SecuritConstant;
 import net.sy599.common.security.SecuritConstantImpl;
@@ -90,6 +91,7 @@ public class InitData {
 //			StaticDataManager.getMonitor();
 			// 初始化屏蔽字
 			KeyWordsFilter.getInstance().initData(SysInfManager.baseDir + "/WEB-INF/classes/csv/keywords.txt");
+			BjdUtil.init();
 		}catch (Exception e){
 			LogUtil.e("init error:"+e.getMessage(),e);
 		}

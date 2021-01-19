@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sy.sanguo.game.utils.BjdUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.struts2.StrutsStatics;
@@ -206,16 +207,21 @@ public class GameStrutsAction extends ActionSupport implements SessionAware, Ser
 	public boolean checkPdkSign() {
 		String sytime = this.getString("sytime");
 		String sign = this.getString("sysign");
-		String md5 = MD5Util.getStringMD5(sytime + "7HGO4K61M8N2D9LARSPU");
-		if (md5.equals(sign)) {
-			return true;
+//		String md5 = MD5Util.getStringMD5(sytime + "7HGO4K61M8N2D9LARSPU");
+		String s1 = sytime + "7HGO4K61M8N2D9LARSPU";
+		String s2 = sytime + BjdUtil.sign_key_new;
+		if (BjdUtil.useNewSignKey()) {
+			return MD5Util.getStringMD5(s2).equals(sign);
 		} else {
-			if (Md5CheckUtil.checkHttpMd5(request)) {
+			if (MD5Util.getStringMD5(s1).equals(sign) || MD5Util.getStringMD5(s2).equals(sign)) {
 				return true;
+			} else {
+				if (Md5CheckUtil.checkHttpMd5(request)) {
+					return true;
+				}
+				return false;
 			}
-			return false;
 		}
-
 	}
 
 	/**
@@ -235,12 +241,18 @@ public class GameStrutsAction extends ActionSupport implements SessionAware, Ser
 		String[] objs = map.keySet().toArray(new String[0]);
 		Arrays.sort(objs);
 
-		StringBuilder stringBuilder = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		for (String obj : objs) {
-			stringBuilder.append("&").append(obj).append("=").append(map.get(obj));
+			sb.append("&").append(obj).append("=").append(map.get(obj));
 		}
-		stringBuilder.append("&key=").append(loadSignKey());
-		return sign.equalsIgnoreCase(com.sy.sanguo.common.util.request.MD5Util.getMD5String(stringBuilder));
+		String s1 = sb.toString() + "&key=" + loadSignKey();
+		String s2 = sb.toString() + "&key=" + BjdUtil.sign_key_new;
+		if (BjdUtil.useNewSignKey()) {
+			return sign.equalsIgnoreCase(com.sy.sanguo.common.util.request.MD5Util.getMD5String(s2));
+		} else {
+			return sign.equalsIgnoreCase(com.sy.sanguo.common.util.request.MD5Util.getMD5String(s1))
+					|| sign.equalsIgnoreCase(com.sy.sanguo.common.util.request.MD5Util.getMD5String(s2));
+		}
 	}
 
 	protected static String loadSignKey(){
