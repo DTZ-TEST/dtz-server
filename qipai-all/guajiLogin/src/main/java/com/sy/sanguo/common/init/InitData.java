@@ -47,6 +47,7 @@ import com.sy.sanguo.game.pdkuai.staticdata.StaticDataManager;
 import com.sy.sanguo.game.pdkuai.util.LogUtil;
 import com.sy.sanguo.game.service.SysInfManager;
 import com.sy599.sanguo.util.TimeUtil;
+import org.apache.log4j.Logger;
 
 public class InitData {
 	private UserDaoImpl userDao;
@@ -67,6 +68,7 @@ public class InitData {
 	public static Properties game_config_properties = new Properties();
 	public static Properties redbag_properties = new Properties();
 	public static Properties keyValueProperties = new Properties();
+	private static final Logger logger = Logger.getLogger(InitData .class);
 
     public static String db_name_1kz = "";
 
@@ -152,7 +154,8 @@ public class InitData {
 
 			jdbcProperties = new Properties();
 			SecuritConstant des = new SecuritConstantImpl();
-			LogUtil.i("jdbc|password|0|"+des.encrypt("123456"));
+			logger.info("jdbc|password|0|"+des.encrypt("123456"));
+			logger.info("jdbc|password|1|"+des.decrypt(pw));
 			jdbcProperties.setProperty("jdbc.password", des.decrypt(pw));
 			jdbcProperties.setProperty("jdbc.url", url);
 			jdbcProperties.setProperty("jdbc.user", user);
