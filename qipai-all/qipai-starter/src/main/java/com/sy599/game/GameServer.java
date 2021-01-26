@@ -403,6 +403,7 @@ public class GameServer {
         reader = Resources.getResourceAsReader(GameServerConfig.ibatis_config_dir);
         String md5Password = jdbcProperties.getProperty("jdbc.password");
         SecuritConstant des = new SecuritConstantImpl();
+        LogUtil.msgLog.info("123456|" + des.encrypt("123456"));
         String url = jdbcProperties.getProperty("jdbc.url");
         jdbcProperties.setProperty("jdbc.password", des.decrypt(md5Password));
         DataSourceManager.setServerSqlMapClient(SqlMapClientBuilder.buildSqlMapClient(reader, jdbcProperties), loadDbNameFromUrl(url));
