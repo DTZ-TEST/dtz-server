@@ -152,6 +152,7 @@ public class InitData {
 
 			jdbcProperties = new Properties();
 			SecuritConstant des = new SecuritConstantImpl();
+			LogUtil.i("jdbc.password:"+des.decrypt(pw));
 			jdbcProperties.setProperty("jdbc.password", des.decrypt(pw));
 			jdbcProperties.setProperty("jdbc.url", url);
 			jdbcProperties.setProperty("jdbc.user", user);
